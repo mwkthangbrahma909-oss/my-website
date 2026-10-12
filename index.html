@@ -1,113 +1,101 @@
- 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Video Studio | Text to Video</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Video Studio</title>
 <style>
 *{box-sizing:border-box}
-body{
- margin:0;background:#0a0b12;color:#f5f5fa;
- font-family:Arial,sans-serif;
-}
-header{
- display:flex;justify-content:space-between;align-items:center;
- padding:18px 6%;border-bottom:1px solid #282936;
-}
-.logo{font-size:22px;font-weight:bold;color:#a78bfa}
-.tag{color:#b9bacb;font-size:12px}
-main{max-width:1000px;margin:35px auto;padding:20px}
-h1{text-align:center;font-size:clamp(28px,5vw,44px)}
-.sub{text-align:center;color:#b8b8c9;line-height:1.6}
-.panel{
- margin-top:30px;background:#141521;border:1px solid #303145;
- border-radius:18px;padding:24px;
-}
-label{display:block;margin:18px 0 9px;font-weight:bold}
-textarea,select,input{
- width:100%;background:#0c0d16;color:white;
- border:1px solid #393a50;border-radius:10px;padding:13px;
- font-size:15px;outline:none;
-}
-textarea{height:145px;resize:vertical;line-height:1.6}
-textarea:focus,select:focus{border-color:#9b87ff}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-button{
- border:0;border-radius:10px;padding:15px;
- cursor:pointer;font-size:15px;font-weight:bold;
-}
-.generate{
- width:100%;margin-top:24px;color:white;
- background:linear-gradient(100deg,#7856f6,#c04edb);
-}
-.generate:disabled{opacity:.6;cursor:wait}
-.note{font-size:12px;color:#a6a6ba;line-height:1.6}
-#status{margin-top:18px;color:#c4b5fd;white-space:pre-wrap}
-.preview{
- margin-top:25px;background:#090a10;border-radius:14px;
- min-height:220px;display:flex;align-items:center;
- justify-content:center;text-align:center;padding:20px;
- border:1px dashed #393a50;color:#aaaabd;
-}
-video{width:100%;max-height:520px;border-radius:12px}
-audio{width:100%;margin-top:15px}
-footer{text-align:center;color:#85859a;padding:30px;font-size:12px}
-@media(max-width:600px){
- .grid{grid-template-columns:1fr}
- main{padding:14px}
- .panel{padding:17px}
- header{padding:16px}
-}
+body{margin:0;background:#090b14;color:#fff;font-family:Arial,sans-serif}
+header{height:70px;padding:0 6%;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #292b40}
+.logo{font-size:23px;font-weight:bold;color:#a78bfa}
+button{cursor:pointer;border:0;border-radius:10px;padding:13px 18px;font-weight:bold}
+.primary{background:linear-gradient(100deg,#7757f7,#c04edf);color:white}
+.secondary{background:#25263a;color:white;border:1px solid #393b53}
+.wrap{width:min(950px,92%);margin:35px auto}
+.card{background:#141625;border:1px solid #303249;padding:25px;border-radius:18px}
+h1{text-align:center;font-size:38px}
+.muted{color:#a7a9c0;line-height:1.6}
+.center{text-align:center}
+label{display:block;margin:17px 0 8px}
+input,textarea,select{width:100%;padding:13px;border:1px solid #3b3d54;border-radius:9px;background:#0b0d18;color:white;font-size:15px}
+textarea{height:130px;resize:vertical}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.hidden{display:none!important}
+.tabs{display:flex;gap:10px;margin-bottom:20px}
+.tabs button{flex:1}
+#message,#status{white-space:pre-wrap;color:#c4b5fd;margin-top:15px}
+.preview{margin-top:22px;min-height:200px;background:#090b12;border:1px dashed #44465b;border-radius:12px;display:flex;align-items:center;justify-content:center;text-align:center;padding:18px}
+video{width:100%;max-height:500px}
+audio{width:100%;margin-top:12px}
+a{color:#c4b5fd}
+@media(max-width:600px){.grid{grid-template-columns:1fr}h1{font-size:29px}.card{padding:17px}header{padding:0 4%}}
 </style>
 </head>
-
 <body>
 <header>
  <div class="logo">✦ AI Video Studio</div>
- <div class="tag">TEXT → VIDEO → MUSIC</div>
+ <button id="logout" class="secondary hidden">Logout</button>
 </header>
 
-<main>
+<!-- LOGIN / SIGNUP -->
+<section id="auth" class="wrap">
+ <div class="card" style="max-width:460px;margin:auto">
+  <h1 id="authTitle">Create Account</h1>
+  <p class="muted center">Create realistic AI videos from your ideas.</p>
+
+  <div class="tabs">
+   <button id="signupTab" class="primary">Sign Up</button>
+   <button id="loginTab" class="secondary">Login</button>
+  </div>
+
+  <form id="authForm">
+   <div id="nameBox">
+    <label for="name">Full Name</label>
+    <input id="name" autocomplete="name" placeholder="Your name">
+   </div>
+   <label for="email">Email Address</label>
+   <input id="email" type="email" required autocomplete="email" placeholder="you@example.com">
+
+   <label for="password">Password</label>
+   <input id="password" type="password" required minlength="6" autocomplete="current-password" placeholder="At least 6 characters">
+
+   <button class="primary" id="authButton" style="width:100%;margin-top:22px">Create Account</button>
+  </form>
+  <p id="message"></p>
+  <p class="muted center" style="font-size:12px">Secure authentication powered by Firebase.</p>
+ </div>
+</section>
+
+<!-- VIDEO STUDIO -->
+<main id="studio" class="wrap hidden">
  <h1>Create Videos with AI</h1>
- <p class="sub">
-  Apne ideas ko realistic videos mein badlein.<br>
-  Hindi, English aur apni pasand ki language mein prompt likhein.
- </p>
+ <p class="muted center">Hindi, English or any language. Describe your idea and create your video.</p>
 
- <section class="panel">
+ <div class="card">
   <label for="prompt">Describe your video</label>
-  <textarea id="prompt"
-   placeholder="Example: Ek realistic gaon mein subah ka scene, suraj ug raha hai, camera dheere-dheere kheton ke upar move karta hai, birds ki awaaz aur cinematic background music..."></textarea>
-
-  <p class="note">
-   Tip: Scene, location, lighting, camera movement, mood aur sound
-   ke baare mein detail likhein.
-  </p>
+  <textarea id="prompt" placeholder="Ek realistic gaon ka scene, subah ka suraj, camera kheton ke upar dheere move kare, birds ki natural sounds aur cinematic music..."></textarea>
 
   <div class="grid">
    <div>
-    <label for="language">Voiceover language</label>
+    <label for="language">Voiceover Language</label>
     <select id="language">
-     <option value="auto">Auto detect from prompt</option>
+     <option value="auto">Auto Detect</option>
      <option value="Hindi">Hindi</option>
      <option value="English">English</option>
      <option value="Assamese">Assamese</option>
      <option value="Bengali">Bengali</option>
-     <option value="Other">Other / API supported language</option>
     </select>
    </div>
-
    <div>
-    <label for="ratio">Video format</label>
+    <label for="ratio">Video Format</label>
     <select id="ratio">
-     <option value="9:16">9:16 - Reels / Shorts</option>
-     <option value="16:9">16:9 - YouTube</option>
-     <option value="1:1">1:1 - Square</option>
+     <option value="9:16">9:16 Shorts/Reels</option>
+     <option value="16:9">16:9 YouTube</option>
+     <option value="1:1">1:1 Square</option>
     </select>
    </div>
-
    <div>
     <label for="duration">Duration</label>
     <select id="duration">
@@ -117,148 +105,170 @@ footer{text-align:center;color:#85859a;padding:30px;font-size:12px}
      <option value="60">60 seconds</option>
     </select>
    </div>
-
    <div>
-    <label for="style">Visual style</label>
+    <label for="style">Video Style</label>
     <select id="style">
-     <option value="Photorealistic cinematic">Realistic / Cinematic</option>
-     <option value="Nature documentary">Nature documentary</option>
+     <option value="Photorealistic cinematic">Realistic Cinematic</option>
+     <option value="Nature documentary">Nature Documentary</option>
      <option value="Anime">Anime</option>
-     <option value="3D animation">3D animation</option>
+     <option value="3D animation">3D Animation</option>
      <option value="Fantasy cinematic">Fantasy</option>
     </select>
    </div>
   </div>
 
-  <label for="music">Background music</label>
+  <label for="music">Background Music</label>
   <select id="music">
-   <option value="cinematic">Cinematic music</option>
-   <option value="peaceful">Peaceful music</option>
-   <option value="dramatic">Dramatic music</option>
-   <option value="happy">Happy music</option>
-   <option value="none">No background music</option>
+   <option value="cinematic">Cinematic</option>
+   <option value="peaceful">Peaceful</option>
+   <option value="dramatic">Dramatic</option>
+   <option value="happy">Happy</option>
+   <option value="none">No Music</option>
   </select>
 
-  <label for="voice">Narration</label>
+  <label for="voice">AI Voiceover</label>
   <select id="voice">
-   <option value="yes">Generate AI voiceover</option>
-   <option value="no">No voiceover</option>
+   <option value="yes">Enable Voiceover</option>
+   <option value="no">No Voiceover</option>
   </select>
 
-  <button class="generate" id="generate" onclick="generateVideo()">
-   ✨ Generate AI Video
-  </button>
+  <button id="generate" class="primary" style="width:100%;margin-top:24px">✨ Generate AI Video</button>
+  <p id="status"></p>
 
-  <div id="status" role="status"></div>
-
-  <div class="preview" id="preview">
-   <div>
-    <div style="font-size:42px">▶</div>
-    <p>Your generated video will appear here.</p>
-    <p class="note">Prompt likhein aur Generate par click karein.</p>
-   </div>
+  <div id="preview" class="preview">
+   <div><div style="font-size:42px">▶</div><p>Your video will appear here</p></div>
   </div>
-
-  <div id="audioBox"></div>
- </section>
+  <div id="media"></div>
+ </div>
 </main>
 
-<footer>
- AI Video Studio · Connect an AI generation API to create real videos.
-</footer>
+<script type="module">
+import { initializeApp }
+ from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 
-<script>
-async function generateVideo(){
- const prompt = document.getElementById("prompt").value.trim();
- const status = document.getElementById("status");
- const button = document.getElementById("generate");
- const preview = document.getElementById("preview");
- const audioBox = document.getElementById("audioBox");
+import {
+ getAuth,onAuthStateChanged,createUserWithEmailAndPassword,
+ signInWithEmailAndPassword,signOut,updateProfile
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 
- if(!prompt){
-  status.textContent = "Pehle apna video prompt likhein.";
-  document.getElementById("prompt").focus();
-  return;
+/* Firebase Console > Project settings > Your apps
+   Replace these placeholders with your actual Firebase config. */
+const firebaseConfig = {
+ apiKey: "YOUR_API_KEY",
+ authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+ projectId: "YOUR_PROJECT_ID",
+ appId: "YOUR_APP_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+const $ = id => document.getElementById(id);
+let mode = "signup";
+
+function setMode(next){
+ mode = next;
+ $("authTitle").textContent = mode === "signup" ? "Create Account" : "Welcome Back";
+ $("authButton").textContent = mode === "signup" ? "Create Account" : "Login";
+ $("nameBox").classList.toggle("hidden",mode === "login");
+ $("name").required = mode === "signup";
+ $("password").autocomplete = mode === "signup" ? "new-password" : "current-password";
+ $("signupTab").className = mode === "signup" ? "primary" : "secondary";
+ $("loginTab").className = mode === "login" ? "primary" : "secondary";
+ $("message").textContent = "";
+}
+$("signupTab").onclick = () => setMode("signup");
+$("loginTab").onclick = () => setMode("login");
+
+$("authForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ $("authButton").disabled = true;
+ $("message").textContent = "Please wait...";
+ try{
+  const email = $("email").value.trim();
+  const password = $("password").value;
+  if(mode === "signup"){
+   const credential = await createUserWithEmailAndPassword(auth,email,password);
+   const name = $("name").value.trim();
+   if(name) await updateProfile(credential.user,{displayName:name});
+  }else{
+   await signInWithEmailAndPassword(auth,email,password);
+  }
+ }catch(error){
+  const errors = {
+   "auth/email-already-in-use":"This email is already registered. Please login.",
+   "auth/invalid-email":"Please enter a valid email.",
+   "auth/weak-password":"Please choose a stronger password.",
+   "auth/invalid-credential":"Incorrect email or password.",
+   "auth/network-request-failed":"Network error. Please try again."
+  };
+  $("message").textContent = errors[error.code] || error.message;
+ }finally{
+  $("authButton").disabled = false;
  }
+});
 
- const settings = {
-  prompt: prompt,
-  language: document.getElementById("language").value,
-  aspectRatio: document.getElementById("ratio").value,
-  duration: Number(document.getElementById("duration").value),
-  visualStyle: document.getElementById("style").value,
-  music: document.getElementById("music").value,
-  voiceover: document.getElementById("voice").value === "yes"
- };
+$("logout").onclick = async()=>{
+ try{await signOut(auth)}catch(e){$("status").textContent=e.message}
+};
 
- button.disabled = true;
- button.textContent = "Generating...";
- status.textContent = "AI video service se connection ki koshish ho rahi hai...";
- audioBox.innerHTML = "";
+onAuthStateChanged(auth,user=>{
+ $("auth").classList.toggle("hidden",!!user);
+ $("studio").classList.toggle("hidden",!user);
+ $("logout").classList.toggle("hidden",!user);
+ if(user) $("status").textContent="Welcome "+(user.displayName || user.email)+"!";
+});
+
+$("generate").onclick = async()=>{
+ const prompt = $("prompt").value.trim();
+ if(!prompt){$("status").textContent="Please enter a video prompt.";return}
+ $("generate").disabled=true;
+ $("status").textContent="Sending request to AI video backend...";
+ $("media").replaceChildren();
 
  try{
-  // Backend endpoint ko apni AI service se connect karein.
-  const response = await fetch("/api/generate", {
-   method: "POST",
-   headers: {"Content-Type": "application/json"},
-   body: JSON.stringify(settings)
+  const response = await fetch("/api/generate",{
+   method:"POST",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({
+    prompt,
+    language:$("language").value,
+    aspectRatio:$("ratio").value,
+    duration:Number($("duration").value),
+    visualStyle:$("style").value,
+    music:$("music").value,
+    voiceover:$("voice").value==="yes"
+   })
   });
-
-  if(!response.ok){
-   throw new Error(
-    response.status === 404
-     ? "AI backend nahi mila. /api/generate endpoint aur AI API setup karein."
-     : "Generation request fail hui. Backend logs check karein."
-   );
-  }
-
+  if(!response.ok) throw new Error("AI backend not configured or generation failed.");
   const data = await response.json();
+  if(!data.videoUrl) throw new Error("No video URL returned by backend.");
 
-  if(!data.videoUrl){
-   throw new Error("Backend ne videoUrl return nahi kiya.");
-  }
-
-  preview.innerHTML = "";
   const video = document.createElement("video");
-  video.controls = true;
-  video.playsInline = true;
-  video.preload = "metadata";
-  video.src = data.videoUrl;
-
-  // Video ke andar audio ho to controls se sound chalega.
-  preview.appendChild(video);
+  video.controls=true; video.playsInline=true; video.src=data.videoUrl;
+  $("preview").replaceChildren(video);
 
   if(data.musicUrl){
-   const audio = document.createElement("audio");
-   audio.controls = true;
-   audio.src = data.musicUrl;
-   audioBox.appendChild(audio);
+   const audio=document.createElement("audio");
+   audio.controls=true;audio.src=data.musicUrl;
+   $("media").appendChild(audio);
   }
-
   if(data.downloadUrl){
-   const link = document.createElement("a");
-   link.href = data.downloadUrl;
-   link.download = "ai-video.mp4";
-   link.textContent = "Download Video";
-   link.style.display = "inline-block";
-   link.style.marginTop = "15px";
-   link.style.color = "#c4b5fd";
-   audioBox.appendChild(link);
+   const a=document.createElement("a");
+   a.href=data.downloadUrl;a.download="ai-video.mp4";
+   a.textContent="Download Video";
+   $("media").appendChild(a);
   }
-
-  status.textContent = "Video ready! Play karke dekhein.";
-
+  $("status").textContent="Video ready!";
  }catch(error){
-  status.textContent =
-   error.message.includes("Failed to fetch")
-    ? "Backend connect nahi hua. Website ko real AI video API se connect karna abhi baaki hai."
-    : error.message;
- }finally{
-  button.disabled = false;
-  button.textContent = "✨ Generate AI Video";
- }
-}
+  $("status").textContent=error.message==="Failed to fetch"
+   ?"AI backend connect nahi hua. Render par backend deploy karein."
+   :error.message;
+ }finally{$("generate").disabled=false}
+};
+
+setMode("signup");
 </script>
 </body>
-</html>
-                       
+      </html>
+ 
