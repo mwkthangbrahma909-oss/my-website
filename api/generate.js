@@ -1,3 +1,23 @@
+const admin = require("firebase-admin");
+
+function getFirebaseAdmin() {
+  if (!admin.apps.length) {
+    const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
+
+    if (!raw) {
+      throw new Error("Firebase server credentials are missing.");
+    }
+
+    const serviceAccount = JSON.parse(raw);
+
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount)
+    });
+  }
+
+  return admin;
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({
@@ -6,19 +26,45 @@ module.exports = async function handler(req, res) {
     });
   }
 
+  // Require a valid Firebase login for every API request.
+  let firebase;
+
+  try {
+    firebase = getFirebaseAdmin();
+
+    const authorization = req.headers.authorization || "";
+    const match = authorization.match(/^Bearer (.+)$/);
+
+    if (!match) {
+      return res.status(401).json({
+        success: false,
+        error: "Please login to use this feature."
+      });
+    }
+
+    await firebase.auth().verifyIdToken(match[1]);
+  } catch (error) {
+    console.error("Authentication error:", error.message);
+
+    return res.status(401).json({
+      success: false,
+      error: "Login required or session expired. Please login again."
+    });
+  }
+
   const apiKey = process.env.MAGIC_HOUR_API_KEY;
 
   if (!apiKey) {
     return res.status(500).json({
       success: false,
-      error: "Magic Hour API key is missing in Vercel."
+      error: "MAGIC_HOUR_API_KEY is missing in Vercel."
     });
   }
 
   try {
     const body = req.body || {};
 
-    // Check the status of an existing video job
+    // Check status of a video job.
     if (body.action === "status") {
       const jobId = body.jobId;
 
@@ -32,7 +78,7 @@ module.exports = async function handler(req, res) {
         });
       }
 
-      const statusResponse = await fetch(
+      const response = await fetch(
         `https://api.magichour.ai/v1/video-projects/${encodeURIComponent(jobId)}`,
         {
           headers: {
@@ -42,19 +88,17 @@ module.exports = async function handler(req, res) {
         }
       );
 
-      const video = await statusResponse.json();
+      const video = await response.json();
 
-      if (!statusResponse.ok) {
-        return res.status(statusResponse.status).json({
+      if (!response.ok) {
+        return res.status(response.status).json({
           success: false,
           error: video.message || "Could not check video status."
         });
       }
 
       const videoUrl =
-        video.downloads && video.downloads.length
-          ? video.downloads[0].url
-          : null;
+        video.downloads?.length ? video.downloads[0].url : null;
 
       return res.status(200).json({
         success: true,
@@ -65,43 +109,32 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    // Start a new video generation job
+    // Start video generation.
     const prompt = body.prompt;
-    const duration = Number(
-      body.duration || body.end_seconds || 5
-    );
+    const duration = Number(body.duration || body.end_seconds || 5);
 
     const requestedRatio =
       body.aspectRatio || body.aspect_ratio || "16:9";
 
-    const aspectRatio = ["16:9", "9:16", "1:1"].includes(
-      requestedRatio
-    )
+    const aspectRatio = ["16:9", "9:16", "1:1"].includes(requestedRatio)
       ? requestedRatio
       : "16:9";
 
-    if (
-      typeof prompt !== "string" ||
-      !prompt.trim()
-    ) {
+    if (typeof prompt !== "string" || !prompt.trim()) {
       return res.status(400).json({
         success: false,
         error: "Please enter a video prompt."
       });
     }
 
-    if (
-      !Number.isInteger(duration) ||
-      duration < 1 ||
-      duration > 60
-    ) {
+    if (!Number.isInteger(duration) || duration < 1 || duration > 60) {
       return res.status(400).json({
         success: false,
         error: "Duration must be between 1 and 60 seconds."
       });
     }
 
-    const apiResponse = await fetch(
+    const response = await fetch(
       "https://api.magichour.ai/v1/text-to-video",
       {
         method: "POST",
@@ -123,14 +156,12 @@ module.exports = async function handler(req, res) {
       }
     );
 
-    const result = await apiResponse.json();
+    const result = await response.json();
 
-    if (!apiResponse.ok) {
-      return res.status(apiResponse.status).json({
+    if (!response.ok) {
+      return res.status(response.status).json({
         success: false,
-        error:
-          result.message ||
-          "Magic Hour could not start video generation."
+        error: result.message || "Magic Hour could not start video generation."
       });
     }
 
@@ -141,11 +172,11 @@ module.exports = async function handler(req, res) {
       message: "Video generation has started."
     });
   } catch (error) {
-    console.error("Magic Hour API error:", error);
+    console.error("Video API error:", error);
 
     return res.status(500).json({
       success: false,
-      error: "Server error while generating video."
+      error: "Server error while processing video."
     });
   }
 };
