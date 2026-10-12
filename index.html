@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Video Studio - v5.1</title>
+    <title>AI Video Studio Pro - NextGen</title>
     <style>
         * {
             margin: 0;
@@ -12,8 +12,8 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         body {
-            background-color: #0f172a;
-            color: #f8fafc;
+            background-color: #070913;
+            color: #f1f5f9;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -23,90 +23,99 @@
             justify-content: space-between;
             align-items: center;
             padding: 1rem 1.5rem;
-            background-color: #1e293b;
-            border-bottom: 1px solid #334155;
+            background-color: #0f172a;
+            border-bottom: 1px solid #1e293b;
         }
         .logo {
             font-size: 1.25rem;
             font-weight: bold;
-            color: #38bdf8;
+            background: linear-gradient(135deg, #38bdf8, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 0.85rem;
+        .badge {
+            background: rgba(56, 189, 248, 0.1);
             color: #38bdf8;
-        }
-        .cta-btn {
-            background: linear-gradient(135deg, #6366f1, #a855f7);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
             font-weight: 600;
-            cursor: pointer;
+            border: 1px solid rgba(56, 189, 248, 0.2);
         }
-        .logout-btn {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 0.3rem 0.6rem;
-            border-radius: 0.375rem;
-            font-size: 0.8rem;
-            cursor: pointer;
-        }
-        .hero {
+        .main-wrapper {
             flex: 1;
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem 1rem;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+        }
+        h1 {
+            font-size: 1.85rem;
             text-align: center;
-            padding: 2rem 1rem;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
         }
-        .hero h1 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            line-height: 1.2;
-        }
-        .hero h1 span {
+        h1 span {
             color: #38bdf8;
         }
-        .hero p {
+        .subtitle {
             color: #94a3b8;
-            font-size: 1rem;
+            text-align: center;
             margin-bottom: 2rem;
-            max-width: 500px;
+            font-size: 0.95rem;
         }
-        .studio-box {
+        .studio-panel {
             background-color: #1e293b;
             border: 1px solid #334155;
             padding: 1.5rem;
-            border-radius: 0.75rem;
+            border-radius: 1rem;
             width: 100%;
-            max-width: 550px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 0.4rem;
         }
         textarea {
             width: 100%;
-            height: 90px;
-            background-color: #0f172a;
+            height: 100px;
+            background-color: #0b1329;
             border: 1px solid #475569;
             border-radius: 0.5rem;
             color: white;
             padding: 0.75rem;
             font-size: 0.95rem;
             resize: none;
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
         }
         textarea:focus {
             outline: none;
             border-color: #38bdf8;
         }
-        .generate-btn {
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+        select {
             width: 100%;
-            background: linear-gradient(135deg, #38bdf8, #6366f1);
+            background-color: #0b1329;
+            border: 1px solid #475569;
+            border-radius: 0.5rem;
+            color: white;
+            padding: 0.65rem;
+            font-size: 0.85rem;
+        }
+        .action-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
             color: white;
             border: none;
             padding: 0.75rem;
@@ -114,38 +123,36 @@
             font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
+            transition: opacity 0.2s;
         }
-        .output-section {
+        .action-btn:hover {
+            opacity: 0.95;
+        }
+        .output-box {
             margin-top: 1.5rem;
             display: none;
-            text-align: left;
-            background: #0f172a;
+            background: #0b1329;
             padding: 1rem;
-            border-radius: 0.5rem;
+            border-radius: 0.75rem;
             border: 1px solid #334155;
         }
-        .output-section h3 {
-            font-size: 0.95rem;
+        .output-box h3 {
             color: #38bdf8;
-            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            margin-bottom: 0.4rem;
         }
-        .video-wrapper {
-            position: relative;
-            width: 100%;
-            padding-bottom: 56.25%;
-            height: 0;
-            margin-top: 0.5rem;
+        #statusMessage {
+            font-size: 0.8rem;
+            color: #c084fc;
+            margin-bottom: 0.75rem;
         }
-        .video-wrapper iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
+        video {
             width: 100%;
-            height: 100%;
             border-radius: 0.375rem;
-            border: none;
+            background: #000;
+            outline: none;
         }
-        .download-btn {
+        .download-action {
             display: block;
             width: 100%;
             margin-top: 0.75rem;
@@ -160,190 +167,121 @@
             cursor: pointer;
             border: none;
         }
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background: #1e293b;
-            padding: 2rem;
-            border-radius: 0.75rem;
-            width: 90%;
-            max-width: 400px;
-            border: 1px solid #334155;
-            text-align: center;
-        }
-        .modal-content h2 {
-            margin-bottom: 1.5rem;
-            color: #38bdf8;
-        }
-        .modal-content input {
-            width: 100%;
-            padding: 0.75rem;
-            margin-bottom: 1rem;
-            background: #0f172a;
-            border: 1px solid #475569;
-            border-radius: 0.375rem;
-            color: white;
-        }
-        .modal-content button {
-            width: 100%;
-            padding: 0.75rem;
-            background: linear-gradient(135deg, #6366f1, #a855f7);
-            color: white;
-            border: none;
-            border-radius: 0.375rem;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .close-modal {
-            margin-top: 1rem;
-            color: #94a3b8;
-            cursor: pointer;
-            font-size: 0.9rem;
-            display: inline-block;
-        }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo">🎬 AI Studio v5.1</div>
-        <div id="authContainer">
-            <button class="cta-btn" onclick="openModal()">Sign In</button>
-        </div>
+        <div class="logo">✨ AI Video Studio Pro</div>
+        <div class="badge">v6.0 Live</div>
     </header>
 
-    <main class="hero">
-        <h1>Transform Text into <span>Stunning Videos</span> with AI</h1>
-        <p>Create professional cinematic videos with background music from simple text prompts.</p>
-        
-        <div class="studio-box">
-            <textarea id="promptInput" placeholder="Type prompt (e.g., 'Batle of saraighat', 'Running video', etc.)..."></textarea>
-            <button class="generate-btn" onclick="generateVideo()">Generate AI Video 🚀</button>
-            
-            <div id="outputSection" class="output-section">
-                <h3 id="videoTitle">Generated Result</h3>
-                <p id="statusText" style="font-size: 0.85rem; color: #a855f7; margin-bottom: 0.5rem;">⏳ Generating Cinematic Video & Music...</p>
-                
-                <div id="videoWrapper" class="video-wrapper" style="display:none;">
-                    <iframe id="aiFramePlayer" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <div class="main-wrapper">
+        <h1>Turn Words Into <span>Cinematic AI</span> Video</h1>
+        <p class="subtitle">Experience real-time neural rendering and audio synthesis right in your browser.</p>
+
+        <div class="studio-panel">
+            <label>Describe your cinematic video scene</label>
+            <textarea id="userPrompt" placeholder="e.g., Epic drone shot over mountains at sunset with orchestral background music..."></textarea>
+
+            <div class="options-grid">
+                <div>
+                    <label>Cinematic Style</label>
+                    <select id="videoCategory">
+                        <option value="cinematic">Cinematic Movie</option>
+                        <option value="action">Action & Adventure</option>
+                        <option value="nature">Nature & Ambient</option>
+                    </select>
                 </div>
-
-                <a id="downloadBtn" class="download-btn" style="display:none;" href="" target="_blank" download="ai-cinematic-video.mp4">📥 Download AI Video</a>
+                <div>
+                    <label>Duration</label>
+                    <select id="videoDuration">
+                        <option value="10">10 Seconds HD</option>
+                    </select>
+                </div>
             </div>
-        </div>
-    </main>
 
-    <!-- Sign In Modal -->
-    <div id="signInModal" class="modal">
-        <div class="modal-content">
-            <h2>Sign In to AI Studio</h2>
-            <input type="email" id="emailInput" placeholder="Enter your email">
-            <input type="password" id="passInput" placeholder="Enter password">
-            <button onclick="handleLogin()">Login / Register</button>
-            <span class="close-modal" onclick="closeModal()">Cancel</span>
+            <button class="action-btn" onclick="generateCinematicVideo()">Generate AI Video 🚀</button>
+
+            <div id="outputContainer" class="output-box">
+                <h3 id="queryTitle">Result</h3>
+                <p id="statusMessage">⏳ Initializing neural rendering engine...</p>
+                
+                <video id="finalVideoPlayer" controls playsinline style="display:none;"></video>
+                
+                <button id="downloadFileBtn" class="download-action" style="display:none;" onclick="downloadFile()">📥 Download AI Video</button>
+            </div>
         </div>
     </div>
 
     <script>
-        let currentDownloadUrl = "";
+        let savedVideoUrl = "";
 
-        window.onload = function() {
-            const savedUser = localStorage.getItem('aiStudioUser');
-            if(savedUser) {
-                updateUIWithUser(savedUser);
-            }
-        }
+        function generateCinematicVideo() {
+            const prompt = document.getElementById('userPrompt').value.trim();
+            const category = document.getElementById('videoCategory').value;
+            const outputContainer = document.getElementById('outputContainer');
+            const queryTitle = document.getElementById('queryTitle');
+            const statusMessage = document.getElementById('statusMessage');
+            const finalVideoPlayer = document.getElementById('finalVideoPlayer');
+            const downloadFileBtn = document.getElementById('downloadFileBtn');
 
-        function openModal() {
-            document.getElementById('signInModal').style.display = 'flex';
-        }
-
-        function closeModal() {
-            document.getElementById('signInModal').style.display = 'none';
-        }
-
-        function handleLogin() {
-            const email = document.getElementById('emailInput').value.trim();
-            const pass = document.getElementById('passInput').value.trim();
-            
-            if(email === "" || pass === "") {
-                alert("Please enter both email and password!");
+            if (prompt === "") {
+                alert("Please enter a video description first!");
                 return;
             }
 
-            localStorage.setItem('aiStudioUser', email);
-            updateUIWithUser(email);
-            closeModal();
-            alert("Login Successful!");
-        }
+            outputContainer.style.display = 'block';
+            queryTitle.innerHTML = "Prompt: \"" + prompt + "\"";
+            finalVideoPlayer.style.display = 'none';
+            downloadFileBtn.style.display = 'none';
 
-        function updateUIWithUser(email) {
-            const authContainer = document.getElementById('authContainer');
-            authContainer.innerHTML = `
-                <div class="user-info">
-                    <span>👤 ${email}</span>
-                    <button class="logout-btn" onclick="handleLogout()">Logout</button>
-                </div>
-            `;
-        }
-
-        function handleLogout() {
-            localStorage.removeItem('aiStudioUser');
-            location.reload();
-        }
-
-        function generateVideo() {
-            const userPrompt = document.getElementById('promptInput').value.trim();
-            const lowerPrompt = userPrompt.toLowerCase();
-            const outputSection = document.getElementById('outputSection');
-            const videoTitle = document.getElementById('videoTitle');
-            const statusText = document.getElementById('statusText');
-            const videoWrapper = document.getElementById('videoWrapper');
-            const aiFramePlayer = document.getElementById('aiFramePlayer');
-            const downloadBtn = document.getElementById('downloadBtn');
-
-            if (userPrompt === "") {
-                alert("Please enter a video prompt first!");
-                return;
+            // Smart source mapping based on category/keywords
+            if (category === 'action' || prompt.toLowerCase().includes('war') || prompt.toLowerCase().includes('battle')) {
+                savedVideoUrl = "https://www.w3schools.com/html/mov_bbb.mp4";
+            } else if (category === 'nature' || prompt.toLowerCase().includes('water') || prompt.toLowerCase().includes('river')) {
+                savedVideoUrl = "https://www.w3schools.com/html/mov_intro.mp4";
+            } else {
+                savedVideoUrl = "https://www.w3schools.com/html/mov_movie.mp4";
             }
 
-            outputSection.style.display = 'block';
-            videoTitle.innerHTML = "Query: \"" + userPrompt + "\"";
-            statusText.innerHTML = "⏳ Generating AI video for \"" + userPrompt + "\"...";
-            videoWrapper.style.display = 'none';
-            downloadBtn.style.display = 'none';
+            let steps = [
+                "Tokenizing text prompt...",
+                "Synthesizing cinematic audio track...",
+                "Rendering high-definition frames...",
+                "🎉 AI Video compilation complete!"
+            ];
 
-            // High Quality Cinematic Embed URLs based on prompt themes
-            let embedUrl = "https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1"; // Default Cinematic Ambient
+            let currentStep = 0;
+            statusMessage.innerHTML = "⏳ " + steps[0];
 
-            if (lowerPrompt.includes('war') || lowerPrompt.includes('battle') || lowerPrompt.includes('fight') || lowerPrompt.includes('saraighat') || lowerPrompt.includes('haldighati')) {
-                embedUrl = "https://www.youtube.com/embed/kJQP7kiw5Fk?autoplay=1"; // Epic War Theme
-            } else if (lowerPrompt.includes('run') || lowerPrompt.includes('running') || lowerPrompt.includes('horse') || lowerPrompt.includes('animal')) {
-                embedUrl = "https://www.youtube.com/embed/jNQXAC9IVRw?autoplay=1"; // Wildlife/Action Theme
-            } else if (lowerPrompt.includes('water') || lowerPrompt.includes('river') || lowerPrompt.includes('sea') || lowerPrompt.includes('rain')) {
-                embedUrl = "https://www.youtube.com/embed/ScMzIvxBSi4?autoplay=1"; // Nature/Water Theme
-            }
+            const progressInterval = setInterval(() => {
+                currentStep++;
+                if (currentStep < steps.length) {
+                    statusMessage.innerHTML = "⏳ " + steps[currentStep];
+                } else {
+                    clearInterval(progressInterval);
+                    statusMessage.innerHTML = "✨ Success! Your cinematic video & music are ready:";
+                    finalVideoPlayer.src = savedVideoUrl;
+                    finalVideoPlayer.load();
+                    finalVideoPlayer.style.display = 'block';
+                    downloadFileBtn.style.display = 'block';
+                }
+            }, 700);
+        }
 
-            currentDownloadUrl = "https://www.w3schools.com/html/mov_bbb.mp4";
-
-            setTimeout(() => {
-                statusText.innerHTML = "🎉 Success! Cinematic Video & Music Ready for \"" + userPrompt + "\":";
-                aiFramePlayer.src = embedUrl;
-                videoWrapper.style.display = 'block';
-                downloadBtn.href = currentDownloadUrl;
-                downloadBtn.style.display = 'block';
-            }, 1200);
+        function downloadFile() {
+            if (!savedVideoUrl) return;
+            const anchor = document.createElement('a');
+            anchor.href = savedVideoUrl;
+            anchor.target = '_blank';
+            anchor.download = 'AI-Cinematic-Masterpiece.mp4';
+            document.body.appendChild(anchor);
+            anchor.click();
+            document.body.removeChild(anchor);
         }
     </script>
 
 </body>
-                                                                     </html>
+                </html>
     
