@@ -2,22 +2,22 @@
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({
-      error: "Only POST requests are allowed."
+      success: false,
+      error: "POST request required"
     });
   }
 
   const { prompt } = req.body || {};
 
-  if (!prompt || !prompt.trim()) {
+  if (typeof prompt !== "string" || !prompt.trim()) {
     return res.status(400).json({
+      success: false,
       error: "Please enter a video prompt."
     });
   }
 
-  // Backend route is ready, but no AI video provider
-  // has been connected yet.
   return res.status(501).json({
-    error: "Backend is running, but AI video generation is not connected yet. A compatible AI video API is required."
+    success: false,
+    error: "AI video provider is not connected yet. Please configure an AI video API."
   });
 };
-      
