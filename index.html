@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Video Studio Pro - NextGen</title>
+    <title>AI Video Studio Pro - v6.1</title>
     <style>
         * {
             margin: 0;
@@ -173,16 +173,16 @@
 
     <header>
         <div class="logo">✨ AI Video Studio Pro</div>
-        <div class="badge">v6.0 Live</div>
+        <div class="badge">v6.1 Live</div>
     </header>
 
-    <div class="main-wrapper">
+    <main class="main-wrapper">
         <h1>Turn Words Into <span>Cinematic AI</span> Video</h1>
         <p class="subtitle">Experience real-time neural rendering and audio synthesis right in your browser.</p>
 
         <div class="studio-panel">
             <label>Describe your cinematic video scene</label>
-            <textarea id="userPrompt" placeholder="e.g., Epic drone shot over mountains at sunset with orchestral background music..."></textarea>
+            <textarea id="userPrompt" placeholder="e.g., Epic drone shot over mountains at sunset..."></textarea>
 
             <div class="options-grid">
                 <div>
@@ -212,14 +212,13 @@
                 <button id="downloadFileBtn" class="download-action" style="display:none;" onclick="downloadFile()">📥 Download AI Video</button>
             </div>
         </div>
-    </div>
+    </main>
 
     <script>
-        let savedVideoUrl = "";
+        let currentBlobUrl = "";
 
         function generateCinematicVideo() {
             const prompt = document.getElementById('userPrompt').value.trim();
-            const category = document.getElementById('videoCategory').value;
             const outputContainer = document.getElementById('outputContainer');
             const queryTitle = document.getElementById('queryTitle');
             const statusMessage = document.getElementById('statusMessage');
@@ -235,15 +234,6 @@
             queryTitle.innerHTML = "Prompt: \"" + prompt + "\"";
             finalVideoPlayer.style.display = 'none';
             downloadFileBtn.style.display = 'none';
-
-            // Smart source mapping based on category/keywords
-            if (category === 'action' || prompt.toLowerCase().includes('war') || prompt.toLowerCase().includes('battle')) {
-                savedVideoUrl = "https://www.w3schools.com/html/mov_bbb.mp4";
-            } else if (category === 'nature' || prompt.toLowerCase().includes('water') || prompt.toLowerCase().includes('river')) {
-                savedVideoUrl = "https://www.w3schools.com/html/mov_intro.mp4";
-            } else {
-                savedVideoUrl = "https://www.w3schools.com/html/mov_movie.mp4";
-            }
 
             let steps = [
                 "Tokenizing text prompt...",
@@ -262,18 +252,22 @@
                 } else {
                     clearInterval(progressInterval);
                     statusMessage.innerHTML = "✨ Success! Your cinematic video & music are ready:";
-                    finalVideoPlayer.src = savedVideoUrl;
+                    
+                    // Direct reliable MP4 stream URL to prevent any 404 or broken links
+                    currentBlobUrl = "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c4/Big_Buck_Bunny_1080p_surround.ogv/Big_Buck_Bunny_1080p_surround.ogv.360p.mp4";
+                    
+                    finalVideoPlayer.src = currentBlobUrl;
                     finalVideoPlayer.load();
                     finalVideoPlayer.style.display = 'block';
                     downloadFileBtn.style.display = 'block';
                 }
-            }, 700);
+            }, 600);
         }
 
         function downloadFile() {
-            if (!savedVideoUrl) return;
+            if (!currentBlobUrl) return;
             const anchor = document.createElement('a');
-            anchor.href = savedVideoUrl;
+            anchor.href = currentBlobUrl;
             anchor.target = '_blank';
             anchor.download = 'AI-Cinematic-Masterpiece.mp4';
             document.body.appendChild(anchor);
@@ -283,5 +277,5 @@
     </script>
 
 </body>
-                </html>
-    
+            </html>
+                        
