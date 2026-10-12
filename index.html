@@ -99,13 +99,19 @@
             font-weight: bold;
             cursor: pointer;
         }
+        .output-message {
+            margin-top: 1rem;
+            color: #38bdf8;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
 
     <header>
         <div class="logo">🎬 AI Studio</div>
-        <button class="cta-btn">Sign In</button>
+        <button class="cta-btn" onclick="handleSignIn()">Sign In</button>
     </header>
 
     <main class="hero">
@@ -113,11 +119,34 @@
         <p>Create professional videos from simple text prompts in seconds. Perfect for creators, marketers, and educators.</p>
         
         <div class="studio-box">
-            <textarea placeholder="Type your video script or prompt here (e.g., A cinematic drone shot over a futuristic neon city)..."></textarea>
-            <button class="generate-btn">Generate AI Video 🚀</button>
+            <textarea id="promptInput" placeholder="Type your video script or prompt here (e.g., A cinematic drone shot over a futuristic neon city)..."></textarea>
+            <button class="generate-btn" onclick="generateVideo()">Generate AI Video 🚀</button>
+            <div id="outputMessage" class="output-message"></div>
         </div>
     </main>
 
+    <script>
+        function handleSignIn() {
+            alert("Redirecting to AI Studio Secure Login Portal...");
+        }
+
+        function generateVideo() {
+            const promptText = document.getElementById('promptInput').value.trim();
+            const outputDiv = document.getElementById('outputMessage');
+
+            if (promptText === "") {
+                alert("Please enter a video prompt or script first!");
+                return;
+            }
+
+            outputDiv.innerHTML = "⏳ AI is rendering your video... Please wait (Mock Processing)";
+            
+            setTimeout(() => {
+                outputDiv.innerHTML = "🎉 Success! Your AI video has been generated and queued for download.";
+            }, 3000);
+        }
+    </script>
+
 </body>
-  </html>
-      
+</html>
+
