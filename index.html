@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Video Studio - v4.5</title>
+    <title>AI Video Studio - v4.7</title>
     <style>
         * {
             margin: 0;
@@ -205,7 +205,7 @@
 <body>
 
     <header>
-        <div class="logo">🎬 AI Studio v4.5</div>
+        <div class="logo">🎬 AI Studio v4.7</div>
         <div id="authContainer">
             <button class="cta-btn" onclick="openModal()">Sign In</button>
         </div>
@@ -216,12 +216,12 @@
         <p>Create professional cinematic videos with background music from simple text prompts.</p>
         
         <div class="studio-box">
-            <textarea id="promptInput" placeholder="Type prompt (e.g., 'Batle of saraighat', 'horse', 'water', etc.)..."></textarea>
+            <textarea id="promptInput" placeholder="Type prompt (e.g., 'Running Video', 'War', etc.)..."></textarea>
             <button class="generate-btn" onclick="generateVideo()">Generate AI Video 🚀</button>
             
             <div id="outputSection" class="output-section">
                 <h3 id="videoTitle">Generated Result</h3>
-                <p id="statusText" style="font-size: 0.85rem; color: #a855f7; margin-bottom: 0.5rem;">⏳ Rendering AI Cinematic Animation & Music...</p>
+                <p id="statusText" style="font-size: 0.85rem; color: #a855f7; margin-bottom: 0.5rem;">⏳ Rendering 10-Second Cinematic Video...</p>
                 
                 <video id="aiVideoPlayer" controls playsinline style="display:none;"></video>
 
@@ -304,17 +304,16 @@
 
             outputSection.style.display = 'block';
             videoTitle.innerHTML = "Query: \"" + userPrompt + "\"";
-            statusText.innerHTML = "⏳ Synthesizing AI frames and background audio for \"" + userPrompt + "\"...";
+            statusText.innerHTML = "⏳ Rendering 10-second cinematic video for \"" + userPrompt + "\"...";
             videoPlayer.style.display = 'none';
             downloadBtn.style.display = 'none';
 
-            // Create a dynamic HTML5 Canvas Animation representing the video
             const canvas = document.createElement('canvas');
             canvas.width = 640;
             canvas.height = 360;
             const ctx = canvas.getContext('2d');
             
-            const stream = canvas.captureStream(30); // 30 FPS video stream
+            const stream = canvas.captureStream(30);
             let recorder;
             try {
                 recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
@@ -333,40 +332,39 @@
                 videoPlayer.src = generatedBlobUrl;
                 videoPlayer.style.display = 'block';
                 downloadBtn.style.display = 'block';
-                statusText.innerHTML = "🎉 Success! Cinematic Video & Music Ready for \"" + userPrompt + "\":";
+                statusText.innerHTML = "🎉 Success! 10-Second Cinematic Video Ready for \"" + userPrompt + "\":";
             };
 
             recorder.start();
 
-            // Draw animated cinematic visuals on canvas for 3 seconds
+            // Render 300 frames (10 seconds at 30 FPS)
             let frame = 0;
             const interval = setInterval(() => {
                 frame++;
-                // Gradient background
                 let gradient = ctx.createLinearGradient(0, 0, 640, 360);
                 gradient.addColorStop(0, '#0f172a');
-                gradient.addColorStop(0.5, '#3b82f6');
-                gradient.addColorStop(1, '#9333ea');
+                gradient.addColorStop(0.5, '#1e3a8a');
+                gradient.addColorStop(1, '#6d28d9');
                 ctx.fillStyle = gradient;
                 ctx.fillRect(0, 0, 640, 360);
 
-                // Animated glowing circles
+                // Moving visual particle effect
                 ctx.beginPath();
-                ctx.arc(320 + Math.sin(frame * 0.2) * 100, 180 + Math.cos(frame * 0.2) * 50, 40, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.arc(320 + Math.sin(frame * 0.08) * 180, 180 + Math.cos(frame * 0.08) * 90, 60, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(56, 189, 248, 0.3)';
                 ctx.fill();
 
-                // Render user's prompt text on video
+                // Text rendering
                 ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 24px Segoe UI';
+                ctx.font = 'bold 22px Segoe UI';
                 ctx.textAlign = 'center';
-                ctx.fillText("AI Studio: " + userPrompt, 320, 180);
+                ctx.fillText("AI Studio: " + userPrompt, 320, 170);
                 
-                ctx.font = '14px Segoe UI';
+                ctx.font = '13px Segoe UI';
                 ctx.fillStyle = '#38bdf8';
-                ctx.fillText("Rendering Frame " + frame + " / 90", 320, 215);
+                ctx.fillText("Cinematic Frame " + frame + " / 300", 320, 210);
 
-                if (frame >= 90) { // Stop after 3 seconds
+                if (frame >= 300) { // Stops precisely at 10 seconds
                     clearInterval(interval);
                     recorder.stop();
                 }
@@ -377,7 +375,7 @@
             if (!generatedBlobUrl) return;
             const a = document.createElement('a');
             a.href = generatedBlobUrl;
-            a.download = 'AI-Studio-Cinematic.webm';
+            a.download = 'AI-Studio-Cinematic-10s.webm';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -386,4 +384,4 @@
 
 </body>
     </html>
-    
+            
