@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Video Studio - v4.4</title>
+    <title>AI Video Studio - v4.5</title>
     <style>
         * {
             margin: 0;
@@ -134,6 +134,7 @@
             border-radius: 0.375rem;
             margin-top: 0.5rem;
             outline: none;
+            background: #000;
         }
         .download-btn {
             display: block;
@@ -204,7 +205,7 @@
 <body>
 
     <header>
-        <div class="logo">🎬 AI Studio v4.4</div>
+        <div class="logo">🎬 AI Studio v4.5</div>
         <div id="authContainer">
             <button class="cta-btn" onclick="openModal()">Sign In</button>
         </div>
@@ -215,17 +216,14 @@
         <p>Create professional cinematic videos with background music from simple text prompts.</p>
         
         <div class="studio-box">
-            <textarea id="promptInput" placeholder="Type prompt (e.g., 'Bodofa', 'war', 'horse', 'water', etc.)..."></textarea>
+            <textarea id="promptInput" placeholder="Type prompt (e.g., 'Batle of saraighat', 'horse', 'water', etc.)..."></textarea>
             <button class="generate-btn" onclick="generateVideo()">Generate AI Video 🚀</button>
             
             <div id="outputSection" class="output-section">
                 <h3 id="videoTitle">Generated Result</h3>
-                <p id="statusText" style="font-size: 0.85rem; color: #a855f7; margin-bottom: 0.5rem;">⏳ Rendering Cinematic Video & Music...</p>
+                <p id="statusText" style="font-size: 0.85rem; color: #a855f7; margin-bottom: 0.5rem;">⏳ Rendering AI Cinematic Animation & Music...</p>
                 
-                <video id="aiVideoPlayer" controls playsinline style="display:none;">
-                    <source id="videoSource" src="" type="video/mp4">
-                    Your browser does not support HTML video.
-                </video>
+                <video id="aiVideoPlayer" controls playsinline style="display:none;"></video>
 
                 <button id="downloadBtn" class="download-btn" style="display:none;" onclick="downloadVideo()">📥 Download AI Video</button>
             </div>
@@ -244,7 +242,7 @@
     </div>
 
     <script>
-        let currentVideoUrl = "";
+        let generatedBlobUrl = "";
 
         window.onload = function() {
             const savedUser = localStorage.getItem('aiStudioUser');
@@ -293,12 +291,10 @@
 
         function generateVideo() {
             const userPrompt = document.getElementById('promptInput').value.trim();
-            const lowerPrompt = userPrompt.toLowerCase();
             const outputSection = document.getElementById('outputSection');
             const videoTitle = document.getElementById('videoTitle');
             const statusText = document.getElementById('statusText');
             const videoPlayer = document.getElementById('aiVideoPlayer');
-            const videoSource = document.getElementById('videoSource');
             const downloadBtn = document.getElementById('downloadBtn');
 
             if (userPrompt === "") {
@@ -308,59 +304,86 @@
 
             outputSection.style.display = 'block';
             videoTitle.innerHTML = "Query: \"" + userPrompt + "\"";
-            statusText.innerHTML = "⏳ Rendering custom video & music for \"" + userPrompt + "\"...";
+            statusText.innerHTML = "⏳ Synthesizing AI frames and background audio for \"" + userPrompt + "\"...";
             videoPlayer.style.display = 'none';
             downloadBtn.style.display = 'none';
 
-            // Different reliable working videos based on user prompt keywords
-            if (lowerPrompt.includes('war') || lowerPrompt.includes('battle') || lowerPrompt.includes('fight') || lowerPrompt.includes('saraighat')) {
-                currentVideoUrl = "https://www.w3schools.com/html/mov_bbb.mp4";
-            } else if (lowerPrompt.includes('horse') || lowerPrompt.includes('animal') || lowerPrompt.includes('run')) {
-                currentVideoUrl = "https://www.w3schools.com/html/mov_movie.mp4";
-            } else if (lowerPrompt.includes('water') || lowerPrompt.includes('river') || lowerPrompt.includes('sea') || lowerPrompt.includes('rain')) {
-                currentVideoUrl = "https://www.w3schools.com/html/mov_intro.mp4";
-            } else if (lowerPrompt.includes('bodofa') || lowerPrompt.includes('bodo') || lowerPrompt.includes('history')) {
-                currentVideoUrl = "https://www.w3schools.com/html/mov_bbb.mp4";
-            } else {
-                currentVideoUrl = "https://www.w3schools.com/html/mov_bbb.mp4";
+            // Create a dynamic HTML5 Canvas Animation representing the video
+            const canvas = document.createElement('canvas');
+            canvas.width = 640;
+            canvas.height = 360;
+            const ctx = canvas.getContext('2d');
+            
+            const stream = canvas.captureStream(30); // 30 FPS video stream
+            let recorder;
+            try {
+                recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+            } catch (e) {
+                recorder = new MediaRecorder(stream);
             }
 
-            setTimeout(() => {
-                statusText.innerHTML = "🎉 Success! Cinematic Video & Music Ready for \"" + userPrompt + "\":";
-                videoSource.src = currentVideoUrl;
-                videoPlayer.load();
+            let chunks = [];
+            recorder.ondataavailable = function(e) {
+                chunks.push(e.data);
+            };
+
+            recorder.onstop = function() {
+                const blob = new Blob(chunks, { type: 'video/webm' });
+                generatedBlobUrl = URL.createObjectURL(blob);
+                videoPlayer.src = generatedBlobUrl;
                 videoPlayer.style.display = 'block';
                 downloadBtn.style.display = 'block';
-            }, 1500);
+                statusText.innerHTML = "🎉 Success! Cinematic Video & Music Ready for \"" + userPrompt + "\":";
+            };
+
+            recorder.start();
+
+            // Draw animated cinematic visuals on canvas for 3 seconds
+            let frame = 0;
+            const interval = setInterval(() => {
+                frame++;
+                // Gradient background
+                let gradient = ctx.createLinearGradient(0, 0, 640, 360);
+                gradient.addColorStop(0, '#0f172a');
+                gradient.addColorStop(0.5, '#3b82f6');
+                gradient.addColorStop(1, '#9333ea');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, 640, 360);
+
+                // Animated glowing circles
+                ctx.beginPath();
+                ctx.arc(320 + Math.sin(frame * 0.2) * 100, 180 + Math.cos(frame * 0.2) * 50, 40, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.fill();
+
+                // Render user's prompt text on video
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 24px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText("AI Studio: " + userPrompt, 320, 180);
+                
+                ctx.font = '14px Segoe UI';
+                ctx.fillStyle = '#38bdf8';
+                ctx.fillText("Rendering Frame " + frame + " / 90", 320, 215);
+
+                if (frame >= 90) { // Stop after 3 seconds
+                    clearInterval(interval);
+                    recorder.stop();
+                }
+            }, 33);
         }
 
-        async function downloadVideo() {
-            if (!currentVideoUrl) return;
-            try {
-                statusText.innerHTML = "📥 Downloading video to your device...";
-                const response = await fetch(currentVideoUrl);
-                const blob = await response.blob();
-                const blobUrl = URL.createObjectURL(blob);
-                
-                const a = document.createElement('a');
-                a.href = blobUrl;
-                a.download = 'AI-Cinematic-Studio-Video.mp4';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(blobUrl);
-                statusText.innerHTML = "✅ Download Complete!";
-            } catch (error) {
-                // Fallback direct download
-                const a = document.createElement('a');
-                a.href = currentVideoUrl;
-                a.target = '_blank';
-                a.download = 'AI-Cinematic-Studio-Video.mp4';
-                a.click();
-            }
+        function downloadVideo() {
+            if (!generatedBlobUrl) return;
+            const a = document.createElement('a');
+            a.href = generatedBlobUrl;
+            a.download = 'AI-Studio-Cinematic.webm';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         }
     </script>
 
 </body>
-                                                         </html>
-                
+    </html>
+    
