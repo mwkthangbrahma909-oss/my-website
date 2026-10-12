@@ -4,155 +4,174 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>AI Video Studio</title>
+
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#090b14;color:#fff;font-family:Arial,sans-serif}
-header{height:70px;padding:0 6%;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #292b40}
-.logo{font-size:23px;font-weight:bold;color:#a78bfa}
+header{min-height:65px;padding:12px 5%;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #292b40}
+.logo{font-size:22px;font-weight:bold;color:#a78bfa}
 button{cursor:pointer;border:0;border-radius:10px;padding:13px 18px;font-weight:bold}
+button:disabled{opacity:.55;cursor:wait}
 .primary{background:linear-gradient(100deg,#7757f7,#c04edf);color:white}
 .secondary{background:#25263a;color:white;border:1px solid #393b53}
-.wrap{width:min(950px,92%);margin:35px auto}
-.card{background:#141625;border:1px solid #303249;padding:25px;border-radius:18px}
-h1{text-align:center;font-size:38px}
+.wrap{width:min(950px,92%);margin:30px auto}
+.card{background:#141625;border:1px solid #303249;padding:24px;border-radius:18px}
+h1{text-align:center;font-size:34px}
 .muted{color:#a7a9c0;line-height:1.6}
 .center{text-align:center}
 label{display:block;margin:17px 0 8px}
 input,textarea,select{width:100%;padding:13px;border:1px solid #3b3d54;border-radius:9px;background:#0b0d18;color:white;font-size:15px}
 textarea{height:130px;resize:vertical}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .hidden{display:none!important}
 .tabs{display:flex;gap:10px;margin-bottom:20px}
 .tabs button{flex:1}
-#message,#status{white-space:pre-wrap;color:#c4b5fd;margin-top:15px}
-.preview{margin-top:22px;min-height:200px;background:#090b12;border:1px dashed #44465b;border-radius:12px;display:flex;align-items:center;justify-content:center;text-align:center;padding:18px}
-video{width:100%;max-height:500px}
-audio{width:100%;margin-top:12px}
+#message,#status{white-space:pre-wrap;color:#c4b5fd;margin-top:15px;line-height:1.6}
+.preview{margin-top:22px;min-height:190px;background:#090b12;border:1px dashed #44465b;border-radius:12px;display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;overflow:hidden}
+video{width:100%;max-height:500px;border-radius:10px}
 a{color:#c4b5fd}
-@media(max-width:600px){.grid{grid-template-columns:1fr}h1{font-size:29px}.card{padding:17px}header{padding:0 4%}}
+#media{margin-top:18px}
+@media(max-width:600px){.grid{grid-template-columns:1fr}h1{font-size:28px}.card{padding:17px}header{padding:12px 4%}.logo{font-size:19px}}
 </style>
 </head>
+
 <body>
 <header>
- <div class="logo">✦ AI Video Studio</div>
- <button id="logout" class="secondary hidden">Logout</button>
+  <div class="logo">✦ AI Video Studio</div>
+  <button id="logout" class="secondary hidden">Logout</button>
 </header>
 
-<!-- LOGIN / SIGNUP -->
 <section id="auth" class="wrap">
- <div class="card" style="max-width:460px;margin:auto">
-  <h1 id="authTitle">Create Account</h1>
-  <p class="muted center">Create realistic AI videos from your ideas.</p>
+  <div class="card" style="max-width:460px;margin:auto">
+    <h1 id="authTitle">Create Account</h1>
+    <p class="muted center">Create AI videos from your ideas.</p>
 
-  <div class="tabs">
-   <button id="signupTab" class="primary">Sign Up</button>
-   <button id="loginTab" class="secondary">Login</button>
+    <div class="tabs">
+      <button id="signupTab" type="button" class="primary">Sign Up</button>
+      <button id="loginTab" type="button" class="secondary">Login</button>
+    </div>
+
+    <form id="authForm">
+      <div id="nameBox">
+        <label for="name">Full Name</label>
+        <input id="name" autocomplete="name" placeholder="Your name">
+      </div>
+
+      <label for="email">Email Address</label>
+      <input id="email" type="email" required autocomplete="email" placeholder="you@example.com">
+
+      <label for="password">Password</label>
+      <input id="password" type="password" required minlength="6"
+        autocomplete="current-password" placeholder="At least 6 characters">
+
+      <button class="primary" id="authButton" type="submit"
+        style="width:100%;margin-top:22px">Create Account</button>
+    </form>
+
+    <p id="message"></p>
+    <p class="muted center" style="font-size:12px">
+      Authentication powered by Firebase.
+    </p>
   </div>
-
-  <form id="authForm">
-   <div id="nameBox">
-    <label for="name">Full Name</label>
-    <input id="name" autocomplete="name" placeholder="Your name">
-   </div>
-   <label for="email">Email Address</label>
-   <input id="email" type="email" required autocomplete="email" placeholder="you@example.com">
-
-   <label for="password">Password</label>
-   <input id="password" type="password" required minlength="6" autocomplete="current-password" placeholder="At least 6 characters">
-
-   <button class="primary" id="authButton" style="width:100%;margin-top:22px">Create Account</button>
-  </form>
-  <p id="message"></p>
-  <p class="muted center" style="font-size:12px">Secure authentication powered by Firebase.</p>
- </div>
 </section>
 
-<!-- VIDEO STUDIO -->
 <main id="studio" class="wrap hidden">
- <h1>Create Videos with AI</h1>
- <p class="muted center">Hindi, English or any language. Describe your idea and create your video.</p>
+  <h1>Create Videos with AI</h1>
+  <p class="muted center">Describe your idea and create an AI video.</p>
 
- <div class="card">
-  <label for="prompt">Describe your video</label>
-  <textarea id="prompt" placeholder="Ek realistic gaon ka scene, subah ka suraj, camera kheton ke upar dheere move kare, birds ki natural sounds aur cinematic music..."></textarea>
+  <div class="card">
+    <label for="prompt">Describe your video</label>
+    <textarea id="prompt"
+      placeholder="A realistic village at sunrise, camera moving slowly over green fields, cinematic lighting..."></textarea>
 
-  <div class="grid">
-   <div>
-    <label for="language">Voiceover Language</label>
-    <select id="language">
-     <option value="auto">Auto Detect</option>
-     <option value="Hindi">Hindi</option>
-     <option value="English">English</option>
-     <option value="Assamese">Assamese</option>
-     <option value="Bengali">Bengali</option>
+    <div class="grid">
+      <div>
+        <label for="language">Voiceover Language</label>
+        <select id="language">
+          <option value="Hindi">Hindi</option>
+          <option value="English">English</option>
+          <option value="Assamese">Assamese</option>
+          <option value="Bengali">Bengali</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="ratio">Video Format</label>
+        <select id="ratio">
+          <option value="9:16">9:16 Shorts/Reels</option>
+          <option value="16:9">16:9 YouTube</option>
+          <option value="1:1">1:1 Square</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="duration">Duration</label>
+        <select id="duration">
+          <option value="3">3 seconds</option>
+          <option value="5" selected>5 seconds</option>
+          <option value="10">10 seconds</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="style">Video Style</label>
+        <select id="style">
+          <option value="Photorealistic cinematic">Realistic Cinematic</option>
+          <option value="Nature documentary">Nature Documentary</option>
+          <option value="Anime">Anime</option>
+          <option value="3D animation">3D Animation</option>
+          <option value="Fantasy cinematic">Fantasy</option>
+        </select>
+      </div>
+    </div>
+
+    <label for="music">Background Music Preference</label>
+    <select id="music">
+      <option value="cinematic">Cinematic</option>
+      <option value="peaceful">Peaceful</option>
+      <option value="dramatic">Dramatic</option>
+      <option value="happy">Happy</option>
+      <option value="none">No Music</option>
     </select>
-   </div>
-   <div>
-    <label for="ratio">Video Format</label>
-    <select id="ratio">
-     <option value="9:16">9:16 Shorts/Reels</option>
-     <option value="16:9">16:9 YouTube</option>
-     <option value="1:1">1:1 Square</option>
+
+    <label for="voice">Voiceover Preference</label>
+    <select id="voice">
+      <option value="yes">Voiceover requested</option>
+      <option value="no">No Voiceover</option>
     </select>
-   </div>
-   <div>
-    <label for="duration">Duration</label>
-    <select id="duration">
-     <option value="10">10 seconds</option>
-     <option value="15">15 seconds</option>
-     <option value="30">30 seconds</option>
-     <option value="60">60 seconds</option>
-    </select>
-   </div>
-   <div>
-    <label for="style">Video Style</label>
-    <select id="style">
-     <option value="Photorealistic cinematic">Realistic Cinematic</option>
-     <option value="Nature documentary">Nature Documentary</option>
-     <option value="Anime">Anime</option>
-     <option value="3D animation">3D Animation</option>
-     <option value="Fantasy cinematic">Fantasy</option>
-    </select>
-   </div>
+
+    <button id="generate" type="button" class="primary"
+      style="width:100%;margin-top:24px">
+      ✨ Generate AI Video
+    </button>
+
+    <p id="status" role="status" aria-live="polite"></p>
+
+    <div id="preview" class="preview">
+      <div>
+        <div style="font-size:42px">▶</div>
+        <p>Your video will appear here.</p>
+      </div>
+    </div>
+
+    <div id="media"></div>
   </div>
-
-  <label for="music">Background Music</label>
-  <select id="music">
-   <option value="cinematic">Cinematic</option>
-   <option value="peaceful">Peaceful</option>
-   <option value="dramatic">Dramatic</option>
-   <option value="happy">Happy</option>
-   <option value="none">No Music</option>
-  </select>
-
-  <label for="voice">AI Voiceover</label>
-  <select id="voice">
-   <option value="yes">Enable Voiceover</option>
-   <option value="no">No Voiceover</option>
-  </select>
-
-  <button id="generate" class="primary" style="width:100%;margin-top:24px">✨ Generate AI Video</button>
-  <p id="status"></p>
-
-  <div id="preview" class="preview">
-   <div><div style="font-size:42px">▶</div><p>Your video will appear here</p></div>
-  </div>
-  <div id="media"></div>
- </div>
 </main>
 
 <script type="module">
 import { initializeApp }
- from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+  from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 
 import {
- getAuth,onAuthStateChanged,createUserWithEmailAndPassword,
- signInWithEmailAndPassword,signOut,updateProfile
+  getAuth,
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 
-/* Firebase Console > Project settings > Your apps
-   Replace these placeholders with your actual Firebase config. */
-
+/* Your Firebase web configuration */
 const firebaseConfig = {
   apiKey: "AIzaSyAW3wzl2yaYx1qAyghK5Tp1BnzVr05T6OA",
   authDomain: "ai-video-studio-c4c8e.firebaseapp.com",
@@ -162,117 +181,262 @@ const firebaseConfig = {
   appId: "1:188839072849:web:0c705330faeb77f884d470",
   measurementId: "G-8J1XBPP9GR"
 };
- 
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-
 const $ = id => document.getElementById(id);
+
 let mode = "signup";
+let generating = false;
 
-function setMode(next){
- mode = next;
- $("authTitle").textContent = mode === "signup" ? "Create Account" : "Welcome Back";
- $("authButton").textContent = mode === "signup" ? "Create Account" : "Login";
- $("nameBox").classList.toggle("hidden",mode === "login");
- $("name").required = mode === "signup";
- $("password").autocomplete = mode === "signup" ? "new-password" : "current-password";
- $("signupTab").className = mode === "signup" ? "primary" : "secondary";
- $("loginTab").className = mode === "login" ? "primary" : "secondary";
- $("message").textContent = "";
+function setMode(next) {
+  mode = next;
+
+  $("authTitle").textContent =
+    mode === "signup" ? "Create Account" : "Welcome Back";
+
+  $("authButton").textContent =
+    mode === "signup" ? "Create Account" : "Login";
+
+  $("nameBox").classList.toggle("hidden", mode === "login");
+  $("name").required = mode === "signup";
+
+  $("password").autocomplete =
+    mode === "signup" ? "new-password" : "current-password";
+
+  $("signupTab").className =
+    mode === "signup" ? "primary" : "secondary";
+
+  $("loginTab").className =
+    mode === "login" ? "primary" : "secondary";
+
+  $("message").textContent = "";
 }
-$("signupTab").onclick = () => setMode("signup");
-$("loginTab").onclick = () => setMode("login");
 
-$("authForm").addEventListener("submit",async e=>{
- e.preventDefault();
- $("authButton").disabled = true;
- $("message").textContent = "Please wait...";
- try{
-  const email = $("email").value.trim();
-  const password = $("password").value;
-  if(mode === "signup"){
-   const credential = await createUserWithEmailAndPassword(auth,email,password);
-   const name = $("name").value.trim();
-   if(name) await updateProfile(credential.user,{displayName:name});
-  }else{
-   await signInWithEmailAndPassword(auth,email,password);
+$("signupTab").addEventListener("click", () => setMode("signup"));
+$("loginTab").addEventListener("click", () => setMode("login"));
+
+$("authForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  $("authButton").disabled = true;
+  $("message").textContent = "Please wait...";
+
+  try {
+    const email = $("email").value.trim();
+    const password = $("password").value;
+
+    if (mode === "signup") {
+      const credential = await createUserWithEmailAndPassword(
+        auth, email, password
+      );
+
+      const name = $("name").value.trim();
+
+      if (name) {
+        await updateProfile(credential.user, {
+          displayName: name
+        });
+      }
+    } else {
+      await signInWithEmailAndPassword(auth, email, password);
+    }
+  } catch (error) {
+    const errors = {
+      "auth/email-already-in-use":
+        "This email is already registered. Please login.",
+      "auth/invalid-email":
+        "Please enter a valid email.",
+      "auth/weak-password":
+        "Please choose a stronger password.",
+      "auth/invalid-credential":
+        "Incorrect email or password.",
+      "auth/network-request-failed":
+        "Network error. Please try again."
+    };
+
+    $("message").textContent =
+      errors[error.code] || error.message;
+  } finally {
+    $("authButton").disabled = false;
   }
- }catch(error){
-  const errors = {
-   "auth/email-already-in-use":"This email is already registered. Please login.",
-   "auth/invalid-email":"Please enter a valid email.",
-   "auth/weak-password":"Please choose a stronger password.",
-   "auth/invalid-credential":"Incorrect email or password.",
-   "auth/network-request-failed":"Network error. Please try again."
-  };
-  $("message").textContent = errors[error.code] || error.message;
- }finally{
-  $("authButton").disabled = false;
- }
 });
 
-$("logout").onclick = async()=>{
- try{await signOut(auth)}catch(e){$("status").textContent=e.message}
-};
-
-onAuthStateChanged(auth,user=>{
- $("auth").classList.toggle("hidden",!!user);
- $("studio").classList.toggle("hidden",!user);
- $("logout").classList.toggle("hidden",!user);
- if(user) $("status").textContent="Welcome "+(user.displayName || user.email)+"!";
+$("logout").addEventListener("click", async () => {
+  try {
+    await signOut(auth);
+  } catch (error) {
+    $("status").textContent = error.message;
+  }
 });
 
-$("generate").onclick = async()=>{
- const prompt = $("prompt").value.trim();
- if(!prompt){$("status").textContent="Please enter a video prompt.";return}
- $("generate").disabled=true;
- $("status").textContent="Sending request to AI video backend...";
- $("media").replaceChildren();
+onAuthStateChanged(auth, user => {
+  $("auth").classList.toggle("hidden", !!user);
+  $("studio").classList.toggle("hidden", !user);
+  $("logout").classList.toggle("hidden", !user);
 
- try{
-  const response = await fetch("/api/generate",{
-   method:"POST",
-   headers:{"Content-Type":"application/json"},
-   body:JSON.stringify({
-    prompt,
-    language:$("language").value,
-    aspectRatio:$("ratio").value,
-    duration:Number($("duration").value),
-    visualStyle:$("style").value,
-    music:$("music").value,
-    voiceover:$("voice").value==="yes"
-   })
-  });
-  if(!response.ok) throw new Error("AI backend not configured or generation failed.");
-  const data = await response.json();
-  if(!data.videoUrl) throw new Error("No video URL returned by backend.");
+  if (user) {
+    $("status").textContent =
+      "Welcome " + (user.displayName || user.email) + "!";
+  } else {
+    $("status").textContent = "";
+  }
+});
+
+function wait(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function readResponse(response) {
+  const text = await response.text();
+
+  let data;
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch {
+    throw new Error(
+      "Server returned an invalid response. Check Vercel logs."
+    );
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      data.error || data.message || `Request failed (${response.status})`
+    );
+  }
+
+  return data;
+}
+
+function showVideo(url) {
+  if (!url || typeof url !== "string") {
+    throw new Error("The API did not return a video URL.");
+  }
 
   const video = document.createElement("video");
-  video.controls=true; video.playsInline=true; video.src=data.videoUrl;
+  video.controls = true;
+  video.playsInline = true;
+  video.preload = "metadata";
+  video.src = url;
+
   $("preview").replaceChildren(video);
 
-  if(data.musicUrl){
-   const audio=document.createElement("audio");
-   audio.controls=true;audio.src=data.musicUrl;
-   $("media").appendChild(audio);
+  const link = document.createElement("a");
+  link.href = url;
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  link.textContent = "Open / Download Video";
+
+  $("media").replaceChildren(link);
+  $("status").textContent = "Video ready!";
+}
+
+$("generate").addEventListener("click", async () => {
+  if (generating) return;
+
+  const prompt = $("prompt").value.trim();
+
+  if (!prompt) {
+    $("status").textContent = "Please enter a video prompt.";
+    return;
   }
-  if(data.downloadUrl){
-   const a=document.createElement("a");
-   a.href=data.downloadUrl;a.download="ai-video.mp4";
-   a.textContent="Download Video";
-   $("media").appendChild(a);
+
+  generating = true;
+  $("generate").disabled = true;
+  $("media").replaceChildren();
+  $("status").textContent = "Starting video generation...";
+
+  $("preview").replaceChildren(
+    document.createTextNode("Please wait while your video is created...")
+  );
+
+  try {
+    const fullPrompt = [
+      prompt,
+      "Visual style: " + $("style").value,
+      "Requested voiceover language: " + $("language").value,
+      $("voice").value === "yes"
+        ? "Voiceover requested in the selected language."
+        : "No voiceover.",
+      $("music").value === "none"
+        ? "No background music."
+        : "Preferred music mood: " + $("music").value
+    ].join("\n");
+
+    const response = await fetch("/api/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        prompt: fullPrompt,
+        aspectRatio: $("ratio").value,
+        duration: Number($("duration").value)
+      })
+    });
+
+    const data = await readResponse(response);
+
+    // Some backends may return a completed URL immediately.
+    if (data.videoUrl) {
+      showVideo(data.videoUrl);
+      return;
+    }
+
+    if (!data.jobId) {
+      throw new Error(
+        "No job ID returned. Check the Magic Hour API response."
+      );
+    }
+
+    const jobId = data.jobId;
+    $("status").textContent = "Video queued. Waiting for completion...";
+
+    // Check the backend for job status every 5 seconds.
+    for (let attempt = 1; attempt <= 60; attempt++) {
+      await wait(5000);
+
+      const statusResponse = await fetch("/api/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          action: "status",
+          jobId
+        })
+      });
+
+      const result = await readResponse(statusResponse);
+      const state = String(result.status || "").toLowerCase();
+
+      if (result.videoUrl) {
+        showVideo(result.videoUrl);
+        return;
+      }
+
+      if (["failed", "error", "cancelled", "canceled"].includes(state)) {
+        throw new Error(result.error || "Video generation failed.");
+      }
+
+      $("status").textContent =
+        `Video is processing... Check ${attempt}/60.`;
+    }
+
+    $("status").textContent =
+      "Video is taking longer than expected. Please try again later.";
+
+  } catch (error) {
+    $("status").textContent = "Error: " + error.message;
+    $("preview").textContent =
+      "Video could not be displayed. Check the error message above.";
+  } finally {
+    generating = false;
+    $("generate").disabled = false;
   }
-  $("status").textContent="Video ready!";
- }catch(error){
-  $("status").textContent=error.message==="Failed to fetch"
-   ?"AI backend connect nahi hua. Render par backend deploy karein."
-   :error.message;
- }finally{$("generate").disabled=false}
-};
+});
 
 setMode("signup");
 </script>
 </body>
-      </html>
- 
+       </html>
