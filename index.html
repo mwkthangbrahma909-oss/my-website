@@ -191,15 +191,16 @@
         <p>Create professional videos with AI voiceover and cinematic scripts from simple prompts.</p>
         
         <div class="studio-box">
-            <textarea id="promptInput" placeholder="Try typing: 'horse running', 'water stream', 'war battlefield', or 'Bodo history'..."></textarea>
+            <textarea id="promptInput" placeholder="Type prompt: 'horse', 'water', 'war', or 'Bodo history'..."></textarea>
             <button class="generate-btn" onclick="generateVideo()">Generate AI Video 🚀</button>
             
             <div id="outputSection" class="output-section">
                 <h3 id="videoTitle">Generated Result</h3>
-                <div class="script-box" id="scriptText">📜 Script & Voiceover: Loading AI script...</div>
+                <div class="script-box" id="scriptText">📜 Script & Voiceover: Loading...</div>
                 <p id="statusText" style="font-size: 0.85rem; color: #a855f7; margin-bottom: 0.5rem;">⏳ Rendering AI Cinematic Frames...</p>
                 
-                <video id="aiVideoPlayer" controls style="display:none;" autoplay muted>
+                <!-- Video Player with controls enabled -->
+                <video id="aiVideoPlayer" controls playsinline style="display:none;">
                     <source id="videoSource" src="" type="video/mp4">
                     Your browser does not support HTML video.
                 </video>
@@ -256,38 +257,37 @@
             statusText.innerHTML = "⏳ AI is synthesizing voiceover and rendering video...";
             videoPlayer.style.display = 'none';
 
-            // Smart keyword matching for different video types
+            // Reliable video URLs
             let selectedVideo = "https://www.w3schools.com/html/mov_bbb.mp4";
             let generatedScript = "AI Voiceover: Cinematic overview of your custom prompt with immersive background sound effects.";
 
             if (promptText.includes('horse') || promptText.includes('animal')) {
-                selectedVideo = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
-                generatedScript = "Voiceover: 'Majestic wild horses gallop freely across the golden plains, driven by raw energy and untamed spirit.' [Cinematic Epic BGM Playing]";
+                selectedVideo = "https://www.w3schools.com/html/mov_bbb.mp4";
+                generatedScript = "Voiceover: 'Majestic wild horses gallop freely across the golden plains, driven by raw energy.' [Cinematic Epic BGM]";
             } else if (promptText.includes('water') || promptText.includes('river') || promptText.includes('sea')) {
-                selectedVideo = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4";
-                generatedScript = "Voiceover: 'Crystal clear water flows seamlessly through ancient valleys, reflecting the serene beauty of nature.' [Calming Ambient Water Sounds]";
+                selectedVideo = "https://www.w3schools.com/html/mov_bbb.mp4";
+                generatedScript = "Voiceover: 'Crystal clear water flows seamlessly through ancient valleys, reflecting serene beauty.' [Calming Water Sounds]";
             } else if (promptText.includes('war') || promptText.includes('battle') || promptText.includes('action')) {
-                selectedVideo = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4";
-                generatedScript = "Voiceover: 'The battlefield echoes with tactical precision and high-stakes drama as history unfolds.' [Intense Action Orchestral BGM]";
+                selectedVideo = "https://www.w3schools.com/html/mov_bbb.mp4";
+                generatedScript = "Voiceover: 'The battlefield echoes with tactical precision and high-stakes drama as history unfolds.' [Intense Orchestral BGM]";
             } else if (promptText.includes('bodo') || promptText.includes('history')) {
-                selectedVideo = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4";
-                generatedScript = "Voiceover: 'Exploring the rich cultural heritage and historical roots of the Bodo community, filled with traditions and legacy.' [Traditional Cinematic Score]";
+                selectedVideo = "https://www.w3schools.com/html/mov_bbb.mp4";
+                generatedScript = "Voiceover: 'Exploring the rich cultural heritage and historical roots of the Bodo community, filled with traditions.' [Traditional Cinematic Score]";
             } else {
-                selectedVideo = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4";
-                generatedScript = "Voiceover: 'Generating custom realistic visual representation based on your unique descriptive prompt.' [AI Synthwave Soundscape]";
+                selectedVideo = "https://www.w3schools.com/html/mov_bbb.mp4";
+                generatedScript = "Voiceover: 'Generating custom realistic visual representation based on your unique prompt.' [AI Synthwave Soundscape]";
             }
 
             setTimeout(() => {
-                statusText.innerHTML = "🎉 Success! AI Video & Voiceover Generated:";
+                statusText.innerHTML = "🎉 Success! AI Video Ready. Tap Play Below:";
                 videoSource.src = selectedVideo;
                 scriptText.innerHTML = "📜 " + generatedScript;
                 videoPlayer.load();
                 videoPlayer.style.display = 'block';
-                videoPlayer.play();
-            }, 2500);
+            }, 2000);
         }
     </script>
 
 </body>
-    </html>
-    
+                </html>
+                
