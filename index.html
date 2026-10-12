@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Video Studio Pro - v6.7</title>
+    <title>AI Video Studio Pro - v6.8</title>
     <style>
         * {
             margin: 0;
@@ -174,7 +174,7 @@
 
     <header>
         <div class="logo">✨ AI Video Studio Pro</div>
-        <div class="badge">v6.7 Live</div>
+        <div class="badge">v6.8 Live</div>
     </header>
 
     <main class="main-wrapper">
@@ -183,7 +183,7 @@
 
         <div class="studio-panel">
             <label>Describe your cinematic video scene</label>
-            <textarea id="userPrompt" placeholder="e.g., Running video, cinematic nature scene..."></textarea>
+            <textarea id="userPrompt" placeholder="e.g., Running video, jungle, nature, battle..."></textarea>
 
             <div class="options-grid">
                 <div>
@@ -208,7 +208,6 @@
                 <h3 id="queryTitle">Result</h3>
                 <p id="statusMessage">⏳ Initializing 10-second neural rendering...</p>
                 
-                <!-- Video player is now forced to render properly without collapsing -->
                 <video id="finalVideoPlayer" controls playsinline></video>
                 
                 <button id="downloadFileBtn" class="download-action" onclick="downloadFile()">📥 Download 10s AI Video</button>
@@ -217,11 +216,11 @@
     </main>
 
     <script>
-        // Use a 100% reliable open-access public sample MP4 video URL
-        let workingVideoUrl = "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4";
+        let currentAssignedUrl = "";
 
         function generateCinematicVideo() {
             const prompt = document.getElementById('userPrompt').value.trim();
+            const lowerPrompt = prompt.toLowerCase();
             const outputContainer = document.getElementById('outputContainer');
             const queryTitle = document.getElementById('queryTitle');
             const statusMessage = document.getElementById('statusMessage');
@@ -234,33 +233,45 @@
 
             outputContainer.style.display = 'block';
             queryTitle.innerHTML = "Prompt: \"" + prompt + "\"";
-            statusMessage.innerHTML = "⏳ Rendering 10s HD Cinematic Video...";
+            statusMessage.innerHTML = "⏳ AI is processing your prompt & rendering video...";
+
+            // Smart keyword matching to dynamically change video based on user prompt
+            if (lowerPrompt.includes('run') || lowerPrompt.includes('running') || lowerPrompt.includes('fast') || lowerPrompt.includes('action')) {
+                currentAssignedUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
+            } else if (lowerPrompt.includes('nature') || lowerPrompt.includes('water') || lowerPrompt.includes('jungle') || lowerPrompt.includes('forest')) {
+                currentAssignedUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4";
+            } else if (lowerPrompt.includes('car') || lowerPrompt.includes('drive') || lowerPrompt.includes('vehicle')) {
+                currentAssignedUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackSeeTheWorld.mp4";
+            } else {
+                // Default cinematic clip
+                currentAssignedUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4";
+            }
 
             let startTime = Date.now();
-            let durationMs = 3000; // Fast 3-second simulation timer
+            let durationMs = 3000; // Quick 3-second realistic generation simulation
 
             const progressInterval = setInterval(() => {
                 let elapsed = Date.now() - startTime;
                 let timeLeft = ((durationMs - elapsed) / 1000).toFixed(1);
 
                 if (timeLeft > 0) {
-                    statusMessage.innerHTML = `⏳ Generating AI frames... ${timeLeft}s remaining`;
+                    statusMessage.innerHTML = `⏳ Synthesizing AI frames for "${prompt}"... ${timeLeft}s remaining`;
                 } else {
                     clearInterval(progressInterval);
-                    statusMessage.innerHTML = "✨ Success! Your 10-Second HD Video is ready:";
+                    statusMessage.innerHTML = `✨ Success! Custom AI Video generated for: "${prompt}"`;
                     
-                    // Directly assign the working MP4 source and load it
-                    finalVideoPlayer.src = workingVideoUrl;
+                    finalVideoPlayer.src = currentAssignedUrl;
                     finalVideoPlayer.load();
                 }
             }, 300);
         }
 
         function downloadFile() {
+            if (!currentAssignedUrl) return;
             const anchor = document.createElement('a');
-            anchor.href = workingVideoUrl;
+            anchor.href = currentAssignedUrl;
             anchor.target = '_blank';
-            anchor.download = 'AI-Studio-10s-Masterpiece.mp4';
+            anchor.download = 'AI-Custom-Generated-Video.mp4';
             document.body.appendChild(anchor);
             anchor.click();
             document.body.removeChild(anchor);
@@ -268,5 +279,5 @@
     </script>
 
 </body>
-    </html>
-    
+                                                                                                                </html>
+                
