@@ -1,283 +1,264 @@
+ 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Video Studio Pro - v6.8</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        body {
-            background-color: #070913;
-            color: #f1f5f9;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 1.5rem;
-            background-color: #1e293b;
-            border-bottom: 1px solid #334155;
-        }
-        .logo {
-            font-size: 1.25rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, #38bdf8, #a855f7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .badge {
-            background: rgba(56, 189, 248, 0.1);
-            color: #38bdf8;
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            border: 1px solid rgba(56, 189, 248, 0.2);
-        }
-        .main-wrapper {
-            flex: 1;
-            max-width: 600px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 2rem 1rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        h1 {
-            font-size: 1.85rem;
-            text-align: center;
-            margin-bottom: 0.5rem;
-            font-weight: 800;
-        }
-        h1 span {
-            color: #38bdf8;
-        }
-        .subtitle {
-            color: #94a3b8;
-            text-align: center;
-            margin-bottom: 2rem;
-            font-size: 0.95rem;
-        }
-        .studio-panel {
-            background-color: #1e293b;
-            border: 1px solid #334155;
-            padding: 1.5rem;
-            border-radius: 1rem;
-            width: 100%;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
-        }
-        label {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #cbd5e1;
-            margin-bottom: 0.4rem;
-        }
-        textarea {
-            width: 100%;
-            height: 100px;
-            background-color: #0b1329;
-            border: 1px solid #475569;
-            border-radius: 0.5rem;
-            color: white;
-            padding: 0.75rem;
-            font-size: 0.95rem;
-            resize: none;
-            margin-bottom: 1.25rem;
-        }
-        textarea:focus {
-            outline: none;
-            border-color: #38bdf8;
-        }
-        .options-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
-            margin-bottom: 1.25rem;
-        }
-        select {
-            width: 100%;
-            background-color: #0b1329;
-            border: 1px solid #475569;
-            border-radius: 0.5rem;
-            color: white;
-            padding: 0.65rem;
-            font-size: 0.85rem;
-        }
-        .action-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
-            color: white;
-            border: none;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-        .action-btn:hover {
-            opacity: 0.95;
-        }
-        .output-box {
-            margin-top: 1.5rem;
-            display: none;
-            background: #0b1329;
-            padding: 1rem;
-            border-radius: 0.75rem;
-            border: 1px solid #334155;
-        }
-        .output-box h3 {
-            color: #38bdf8;
-            font-size: 0.9rem;
-            margin-bottom: 0.4rem;
-        }
-        #statusMessage {
-            font-size: 0.8rem;
-            color: #c084fc;
-            margin-bottom: 0.75rem;
-        }
-        video {
-            width: 100%;
-            border-radius: 0.375rem;
-            background: #000;
-            outline: none;
-            margin-top: 0.5rem;
-        }
-        .download-action {
-            display: block;
-            width: 100%;
-            margin-top: 0.75rem;
-            background: #10b981;
-            color: white;
-            text-align: center;
-            padding: 0.6rem;
-            border-radius: 0.375rem;
-            font-weight: bold;
-            text-decoration: none;
-            font-size: 0.9rem;
-            cursor: pointer;
-            border: none;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Video Studio | Text to Video</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#0a0b12;color:#f5f5fa;
+ font-family:Arial,sans-serif;
+}
+header{
+ display:flex;justify-content:space-between;align-items:center;
+ padding:18px 6%;border-bottom:1px solid #282936;
+}
+.logo{font-size:22px;font-weight:bold;color:#a78bfa}
+.tag{color:#b9bacb;font-size:12px}
+main{max-width:1000px;margin:35px auto;padding:20px}
+h1{text-align:center;font-size:clamp(28px,5vw,44px)}
+.sub{text-align:center;color:#b8b8c9;line-height:1.6}
+.panel{
+ margin-top:30px;background:#141521;border:1px solid #303145;
+ border-radius:18px;padding:24px;
+}
+label{display:block;margin:18px 0 9px;font-weight:bold}
+textarea,select,input{
+ width:100%;background:#0c0d16;color:white;
+ border:1px solid #393a50;border-radius:10px;padding:13px;
+ font-size:15px;outline:none;
+}
+textarea{height:145px;resize:vertical;line-height:1.6}
+textarea:focus,select:focus{border-color:#9b87ff}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+button{
+ border:0;border-radius:10px;padding:15px;
+ cursor:pointer;font-size:15px;font-weight:bold;
+}
+.generate{
+ width:100%;margin-top:24px;color:white;
+ background:linear-gradient(100deg,#7856f6,#c04edb);
+}
+.generate:disabled{opacity:.6;cursor:wait}
+.note{font-size:12px;color:#a6a6ba;line-height:1.6}
+#status{margin-top:18px;color:#c4b5fd;white-space:pre-wrap}
+.preview{
+ margin-top:25px;background:#090a10;border-radius:14px;
+ min-height:220px;display:flex;align-items:center;
+ justify-content:center;text-align:center;padding:20px;
+ border:1px dashed #393a50;color:#aaaabd;
+}
+video{width:100%;max-height:520px;border-radius:12px}
+audio{width:100%;margin-top:15px}
+footer{text-align:center;color:#85859a;padding:30px;font-size:12px}
+@media(max-width:600px){
+ .grid{grid-template-columns:1fr}
+ main{padding:14px}
+ .panel{padding:17px}
+ header{padding:16px}
+}
+</style>
 </head>
+
 <body>
+<header>
+ <div class="logo">✦ AI Video Studio</div>
+ <div class="tag">TEXT → VIDEO → MUSIC</div>
+</header>
 
-    <header>
-        <div class="logo">✨ AI Video Studio Pro</div>
-        <div class="badge">v6.8 Live</div>
-    </header>
+<main>
+ <h1>Create Videos with AI</h1>
+ <p class="sub">
+  Apne ideas ko realistic videos mein badlein.<br>
+  Hindi, English aur apni pasand ki language mein prompt likhein.
+ </p>
 
-    <main class="main-wrapper">
-        <h1>Turn Words Into <span>Cinematic AI</span> Video</h1>
-        <p class="subtitle">Experience real-time neural rendering and audio synthesis right in your browser.</p>
+ <section class="panel">
+  <label for="prompt">Describe your video</label>
+  <textarea id="prompt"
+   placeholder="Example: Ek realistic gaon mein subah ka scene, suraj ug raha hai, camera dheere-dheere kheton ke upar move karta hai, birds ki awaaz aur cinematic background music..."></textarea>
 
-        <div class="studio-panel">
-            <label>Describe your cinematic video scene</label>
-            <textarea id="userPrompt" placeholder="e.g., Running video, jungle, nature, battle..."></textarea>
+  <p class="note">
+   Tip: Scene, location, lighting, camera movement, mood aur sound
+   ke baare mein detail likhein.
+  </p>
 
-            <div class="options-grid">
-                <div>
-                    <label>Cinematic Style</label>
-                    <select id="videoCategory">
-                        <option value="cinematic">Cinematic Movie</option>
-                        <option value="action">Action & Adventure</option>
-                        <option value="nature">Nature & Ambient</option>
-                    </select>
-                </div>
-                <div>
-                    <label>Duration</label>
-                    <select id="videoDuration">
-                        <option value="10">10 Seconds HD</option>
-                    </select>
-                </div>
-            </div>
+  <div class="grid">
+   <div>
+    <label for="language">Voiceover language</label>
+    <select id="language">
+     <option value="auto">Auto detect from prompt</option>
+     <option value="Hindi">Hindi</option>
+     <option value="English">English</option>
+     <option value="Assamese">Assamese</option>
+     <option value="Bengali">Bengali</option>
+     <option value="Other">Other / API supported language</option>
+    </select>
+   </div>
 
-            <button class="action-btn" onclick="generateCinematicVideo()">Generate AI Video 🚀</button>
+   <div>
+    <label for="ratio">Video format</label>
+    <select id="ratio">
+     <option value="9:16">9:16 - Reels / Shorts</option>
+     <option value="16:9">16:9 - YouTube</option>
+     <option value="1:1">1:1 - Square</option>
+    </select>
+   </div>
 
-            <div id="outputContainer" class="output-box">
-                <h3 id="queryTitle">Result</h3>
-                <p id="statusMessage">⏳ Initializing 10-second neural rendering...</p>
-                
-                <video id="finalVideoPlayer" controls playsinline></video>
-                
-                <button id="downloadFileBtn" class="download-action" onclick="downloadFile()">📥 Download 10s AI Video</button>
-            </div>
-        </div>
-    </main>
+   <div>
+    <label for="duration">Duration</label>
+    <select id="duration">
+     <option value="10">10 seconds</option>
+     <option value="15">15 seconds</option>
+     <option value="30">30 seconds</option>
+     <option value="60">60 seconds</option>
+    </select>
+   </div>
 
-    <script>
-        let currentAssignedUrl = "";
+   <div>
+    <label for="style">Visual style</label>
+    <select id="style">
+     <option value="Photorealistic cinematic">Realistic / Cinematic</option>
+     <option value="Nature documentary">Nature documentary</option>
+     <option value="Anime">Anime</option>
+     <option value="3D animation">3D animation</option>
+     <option value="Fantasy cinematic">Fantasy</option>
+    </select>
+   </div>
+  </div>
 
-        function generateCinematicVideo() {
-            const prompt = document.getElementById('userPrompt').value.trim();
-            const lowerPrompt = prompt.toLowerCase();
-            const outputContainer = document.getElementById('outputContainer');
-            const queryTitle = document.getElementById('queryTitle');
-            const statusMessage = document.getElementById('statusMessage');
-            const finalVideoPlayer = document.getElementById('finalVideoPlayer');
+  <label for="music">Background music</label>
+  <select id="music">
+   <option value="cinematic">Cinematic music</option>
+   <option value="peaceful">Peaceful music</option>
+   <option value="dramatic">Dramatic music</option>
+   <option value="happy">Happy music</option>
+   <option value="none">No background music</option>
+  </select>
 
-            if (prompt === "") {
-                alert("Please enter a video description first!");
-                return;
-            }
+  <label for="voice">Narration</label>
+  <select id="voice">
+   <option value="yes">Generate AI voiceover</option>
+   <option value="no">No voiceover</option>
+  </select>
 
-            outputContainer.style.display = 'block';
-            queryTitle.innerHTML = "Prompt: \"" + prompt + "\"";
-            statusMessage.innerHTML = "⏳ AI is processing your prompt & rendering video...";
+  <button class="generate" id="generate" onclick="generateVideo()">
+   ✨ Generate AI Video
+  </button>
 
-            // Smart keyword matching to dynamically change video based on user prompt
-            if (lowerPrompt.includes('run') || lowerPrompt.includes('running') || lowerPrompt.includes('fast') || lowerPrompt.includes('action')) {
-                currentAssignedUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
-            } else if (lowerPrompt.includes('nature') || lowerPrompt.includes('water') || lowerPrompt.includes('jungle') || lowerPrompt.includes('forest')) {
-                currentAssignedUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4";
-            } else if (lowerPrompt.includes('car') || lowerPrompt.includes('drive') || lowerPrompt.includes('vehicle')) {
-                currentAssignedUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackSeeTheWorld.mp4";
-            } else {
-                // Default cinematic clip
-                currentAssignedUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4";
-            }
+  <div id="status" role="status"></div>
 
-            let startTime = Date.now();
-            let durationMs = 3000; // Quick 3-second realistic generation simulation
+  <div class="preview" id="preview">
+   <div>
+    <div style="font-size:42px">▶</div>
+    <p>Your generated video will appear here.</p>
+    <p class="note">Prompt likhein aur Generate par click karein.</p>
+   </div>
+  </div>
 
-            const progressInterval = setInterval(() => {
-                let elapsed = Date.now() - startTime;
-                let timeLeft = ((durationMs - elapsed) / 1000).toFixed(1);
+  <div id="audioBox"></div>
+ </section>
+</main>
 
-                if (timeLeft > 0) {
-                    statusMessage.innerHTML = `⏳ Synthesizing AI frames for "${prompt}"... ${timeLeft}s remaining`;
-                } else {
-                    clearInterval(progressInterval);
-                    statusMessage.innerHTML = `✨ Success! Custom AI Video generated for: "${prompt}"`;
-                    
-                    finalVideoPlayer.src = currentAssignedUrl;
-                    finalVideoPlayer.load();
-                }
-            }, 300);
-        }
+<footer>
+ AI Video Studio · Connect an AI generation API to create real videos.
+</footer>
 
-        function downloadFile() {
-            if (!currentAssignedUrl) return;
-            const anchor = document.createElement('a');
-            anchor.href = currentAssignedUrl;
-            anchor.target = '_blank';
-            anchor.download = 'AI-Custom-Generated-Video.mp4';
-            document.body.appendChild(anchor);
-            anchor.click();
-            document.body.removeChild(anchor);
-        }
-    </script>
+<script>
+async function generateVideo(){
+ const prompt = document.getElementById("prompt").value.trim();
+ const status = document.getElementById("status");
+ const button = document.getElementById("generate");
+ const preview = document.getElementById("preview");
+ const audioBox = document.getElementById("audioBox");
 
+ if(!prompt){
+  status.textContent = "Pehle apna video prompt likhein.";
+  document.getElementById("prompt").focus();
+  return;
+ }
+
+ const settings = {
+  prompt: prompt,
+  language: document.getElementById("language").value,
+  aspectRatio: document.getElementById("ratio").value,
+  duration: Number(document.getElementById("duration").value),
+  visualStyle: document.getElementById("style").value,
+  music: document.getElementById("music").value,
+  voiceover: document.getElementById("voice").value === "yes"
+ };
+
+ button.disabled = true;
+ button.textContent = "Generating...";
+ status.textContent = "AI video service se connection ki koshish ho rahi hai...";
+ audioBox.innerHTML = "";
+
+ try{
+  // Backend endpoint ko apni AI service se connect karein.
+  const response = await fetch("/api/generate", {
+   method: "POST",
+   headers: {"Content-Type": "application/json"},
+   body: JSON.stringify(settings)
+  });
+
+  if(!response.ok){
+   throw new Error(
+    response.status === 404
+     ? "AI backend nahi mila. /api/generate endpoint aur AI API setup karein."
+     : "Generation request fail hui. Backend logs check karein."
+   );
+  }
+
+  const data = await response.json();
+
+  if(!data.videoUrl){
+   throw new Error("Backend ne videoUrl return nahi kiya.");
+  }
+
+  preview.innerHTML = "";
+  const video = document.createElement("video");
+  video.controls = true;
+  video.playsInline = true;
+  video.preload = "metadata";
+  video.src = data.videoUrl;
+
+  // Video ke andar audio ho to controls se sound chalega.
+  preview.appendChild(video);
+
+  if(data.musicUrl){
+   const audio = document.createElement("audio");
+   audio.controls = true;
+   audio.src = data.musicUrl;
+   audioBox.appendChild(audio);
+  }
+
+  if(data.downloadUrl){
+   const link = document.createElement("a");
+   link.href = data.downloadUrl;
+   link.download = "ai-video.mp4";
+   link.textContent = "Download Video";
+   link.style.display = "inline-block";
+   link.style.marginTop = "15px";
+   link.style.color = "#c4b5fd";
+   audioBox.appendChild(link);
+  }
+
+  status.textContent = "Video ready! Play karke dekhein.";
+
+ }catch(error){
+  status.textContent =
+   error.message.includes("Failed to fetch")
+    ? "Backend connect nahi hua. Website ko real AI video API se connect karna abhi baaki hai."
+    : error.message;
+ }finally{
+  button.disabled = false;
+  button.textContent = "✨ Generate AI Video";
+ }
+}
+</script>
 </body>
-                                                                                                                </html>
-                
+</html>
+                       
