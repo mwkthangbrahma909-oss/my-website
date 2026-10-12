@@ -138,21 +138,11 @@
             margin-bottom: 0.75rem;
             border-left: 3px solid #38bdf8;
         }
-        .video-container {
-            position: relative;
+        video {
             width: 100%;
-            padding-bottom: 56.25%;
-            height: 0;
-            margin-top: 0.5rem;
-        }
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
             border-radius: 0.375rem;
-            border: none;
+            margin-top: 0.5rem;
+            outline: none;
         }
         /* Modal Styles */
         .modal {
@@ -219,7 +209,7 @@
         <p>Create professional videos with AI voiceover and cinematic scripts from simple prompts.</p>
         
         <div class="studio-box">
-            <textarea id="promptInput" placeholder="Type any prompt (e.g., 'epic war battlefield', 'wild horse running', etc.)..."></textarea>
+            <textarea id="promptInput" placeholder="Type any prompt (e.g., 'horse', 'war battlefield', 'water stream', etc.)..."></textarea>
             <button class="generate-btn" onclick="generateVideo()">Generate AI Video 🚀</button>
             
             <div id="outputSection" class="output-section">
@@ -227,9 +217,11 @@
                 <div class="script-box" id="scriptText">📜 Script & Voiceover: Loading...</div>
                 <p id="statusText" style="font-size: 0.85rem; color: #a855f7; margin-bottom: 0.5rem;">⏳ Rendering AI Cinematic Frames...</p>
                 
-                <div id="videoContainer" class="video-container" style="display:none;">
-                    <iframe id="aiVideoPlayer" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                </div>
+                <!-- Direct HTML5 Video Player -->
+                <video id="aiVideoPlayer" controls playsinline style="display:none;">
+                    <source id="videoSource" src="" type="video/mp4">
+                    Your browser does not support HTML video.
+                </video>
             </div>
         </div>
     </main>
@@ -298,8 +290,8 @@
             const videoTitle = document.getElementById('videoTitle');
             const scriptText = document.getElementById('scriptText');
             const statusText = document.getElementById('statusText');
-            const videoContainer = document.getElementById('videoContainer');
             const videoPlayer = document.getElementById('aiVideoPlayer');
+            const videoSource = document.getElementById('videoSource');
 
             if (userPrompt === "") {
                 alert("Please enter a video prompt first!");
@@ -309,36 +301,40 @@
             outputSection.style.display = 'block';
             videoTitle.innerHTML = "Query: \"" + userPrompt + "\"";
             statusText.innerHTML = "⏳ AI is synthesizing voiceover and rendering video...";
-            videoContainer.style.display = 'none';
+            videoPlayer.style.display = 'none';
 
-            // Dynamic script generation based on user's exact input words
-            let generatedScript = `Voiceover: 'Cinematic visual depiction of "${userPrompt}". Bringing your text prompt to life with high-definition rendering, professional voice narration, and immersive background audio.' [AI Cinematic Soundscape]`;
-            let videoEmbedUrl = "https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1"; // Default cinematic loop
+            // 100% Dynamic Script based strictly on what user types
+            let generatedScript = `Voiceover: 'Cinematic visual depiction of "${userPrompt}". Bringing your specific prompt to life with high-definition rendering, professional voice narration, and immersive background audio.' [AI Cinematic Soundscape]`;
+            let selectedVideo = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4";
 
-            // Intelligent keyword adaptation
+            // Intelligent keyword matching for customized sample videos
             if (lowerPrompt.includes('war') || lowerPrompt.includes('battle') || lowerPrompt.includes('fight')) {
                 generatedScript = `Voiceover: 'The battlefield echoes with intense tactical maneuvers and high-stakes drama as "${userPrompt}" unfolds before your eyes.' [Epic Orchestral War BGM]`;
-                videoEmbedUrl = "https://www.youtube.com/embed/kJQP7kiw5Fk?autoplay=1";
+                selectedVideo = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4";
             } else if (lowerPrompt.includes('horse') || lowerPrompt.includes('animal') || lowerPrompt.includes('run')) {
-                generatedScript = `Voiceover: 'Witness the breathtaking motion of "${userPrompt}", captured in stunning ultra-HD slow motion.' [Dynamic Nature Soundscape]`;
-                videoEmbedUrl = "https://www.youtube.com/embed/jNQXAC9IVRw?autoplay=1";
+                generatedScript = `Voiceover: 'Witness the breathtaking motion of "${userPrompt}", captured in stunning ultra-HD slow motion across open plains.' [Dynamic Nature Soundscape]`;
+                selectedVideo = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
             } else if (lowerPrompt.includes('water') || lowerPrompt.includes('river') || lowerPrompt.includes('sea') || lowerPrompt.includes('rain')) {
                 generatedScript = `Voiceover: 'Flowing gently and gracefully, "${userPrompt}" creates a deeply calming and serene visual experience.' [Ambient Water & Acoustic BGM]`;
-                videoEmbedUrl = "https://www.youtube.com/embed/ScMzIvxBSi4?autoplay=1";
+                selectedVideo = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4";
             } else if (lowerPrompt.includes('bodo') || lowerPrompt.includes('history')) {
                 generatedScript = `Voiceover: 'Exploring the rich cultural heritage and historical roots associated with "${userPrompt}", filled with deep traditions and legacy.' [Traditional Cinematic Score]`;
-                videoEmbedUrl = "https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1";
+                selectedVideo = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4";
+            } else {
+                generatedScript = `Voiceover: 'AI generated cinematic sequence for your custom text prompt: "${userPrompt}". Featuring professional studio voiceover and background score.' [Synthetic Ambient BGM]`;
+                selectedVideo = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4";
             }
 
             setTimeout(() => {
                 statusText.innerHTML = "🎉 Success! AI Video & Voiceover Generated:";
                 scriptText.innerHTML = "📜 " + generatedScript;
-                videoPlayer.src = videoEmbedUrl;
-                videoContainer.style.display = 'block';
+                videoSource.src = selectedVideo;
+                videoPlayer.load();
+                videoPlayer.style.display = 'block';
             }, 2000);
         }
     </script>
 
 </body>
     </html>
-                                                                                                      
+                    
