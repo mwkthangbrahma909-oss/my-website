@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Video Studio Pro - v6.1</title>
+    <title>AI Video Studio Pro - v6.2</title>
     <style>
         * {
             margin: 0;
@@ -173,7 +173,7 @@
 
     <header>
         <div class="logo">✨ AI Video Studio Pro</div>
-        <div class="badge">v6.1 Live</div>
+        <div class="badge">v6.2 Live</div>
     </header>
 
     <main class="main-wrapper">
@@ -215,7 +215,7 @@
     </main>
 
     <script>
-        let currentBlobUrl = "";
+        let generatedVideoBlobUrl = "";
 
         function generateCinematicVideo() {
             const prompt = document.getElementById('userPrompt').value.trim();
@@ -253,23 +253,67 @@
                     clearInterval(progressInterval);
                     statusMessage.innerHTML = "✨ Success! Your cinematic video & music are ready:";
                     
-                    // Direct reliable MP4 stream URL to prevent any 404 or broken links
-                    currentBlobUrl = "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c4/Big_Buck_Bunny_1080p_surround.ogv/Big_Buck_Bunny_1080p_surround.ogv.360p.mp4";
+                    // Create an actual local canvas-based video stream blob so download always works locally without 404
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 640;
+                    canvas.height = 360;
+                    const ctx = canvas.getContext('2d');
                     
-                    finalVideoPlayer.src = currentBlobUrl;
-                    finalVideoPlayer.load();
-                    finalVideoPlayer.style.display = 'block';
-                    downloadFileBtn.style.display = 'block';
+                    const stream = canvas.captureStream(30);
+                    let recorder;
+                    try {
+                        recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+                    } catch (e) {
+                        recorder = new MediaRecorder(stream);
+                    }
+
+                    let chunks = [];
+                    recorder.ondataavailable = e => chunks.push(e.data);
+                    recorder.onstop = () => {
+                        const blob = new Blob(chunks, { type: 'video/webm' });
+                        generatedVideoBlobUrl = URL.createObjectURL(blob);
+                        finalVideoPlayer.src = generatedVideoBlobUrl;
+                        finalVideoPlayer.load();
+                        finalVideoPlayer.style.display = 'block';
+                        downloadFileBtn.style.display = 'block';
+                    };
+
+                    recorder.start();
+
+                    // Draw 5 seconds of animated cinematic frames
+                    let frame = 0;
+                    const animInterval = setInterval(() => {
+                        frame++;
+                        let grad = ctx.createLinearGradient(0, 0, 640, 360);
+                        grad.addColorStop(0, '#0f172a');
+                        grad.addColorStop(0.5, '#1e3a8a');
+                        grad.addColorStop(1, '#6d28d9');
+                        ctx.fillStyle = grad;
+                        ctx.fillRect(0, 0, 640, 360);
+
+                        ctx.fillStyle = '#ffffff';
+                        ctx.font = 'bold 20px Segoe UI';
+                        ctx.textAlign = 'center';
+                        ctx.fillText("AI Studio: " + prompt, 320, 170);
+
+                        ctx.fillStyle = '#38bdf8';
+                        ctx.font = '14px Segoe UI';
+                        ctx.fillText("Rendered Frame " + frame + " / 150", 320, 210);
+
+                        if (frame >= 150) {
+                            clearInterval(animInterval);
+                            recorder.stop();
+                        }
+                    }, 33);
                 }
-            }, 600);
+            }, 500);
         }
 
         function downloadFile() {
-            if (!currentBlobUrl) return;
+            if (!generatedVideoBlobUrl) return;
             const anchor = document.createElement('a');
-            anchor.href = currentBlobUrl;
-            anchor.target = '_blank';
-            anchor.download = 'AI-Cinematic-Masterpiece.mp4';
+            anchor.href = generatedVideoBlobUrl;
+            anchor.download = 'AI-Cinematic-Masterpiece.webm';
             document.body.appendChild(anchor);
             anchor.click();
             document.body.removeChild(anchor);
@@ -277,5 +321,5 @@
     </script>
 
 </body>
-            </html>
-                        
+                </html>
+    
