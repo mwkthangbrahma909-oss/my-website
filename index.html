@@ -1,8 +1,9 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AI Video Studio</title>
 
 <style>
@@ -31,7 +32,13 @@ textarea{height:130px;resize:vertical}
 video{width:100%;max-height:500px;border-radius:10px}
 a{color:#c4b5fd}
 #media{margin-top:18px}
-@media(max-width:600px){.grid{grid-template-columns:1fr}h1{font-size:28px}.card{padding:17px}header{padding:12px 4%}.logo{font-size:19px}}
+@media(max-width:600px){
+  .grid{grid-template-columns:1fr}
+  h1{font-size:28px}
+  .card{padding:17px}
+  header{padding:12px 4%}
+  .logo{font-size:19px}
+}
 </style>
 </head>
 
@@ -58,17 +65,18 @@ a{color:#c4b5fd}
       </div>
 
       <label for="email">Email Address</label>
-      <input id="email" type="email" required autocomplete="email" placeholder="you@example.com">
+      <input id="email" type="email" required autocomplete="email"
+        placeholder="you@example.com">
 
       <label for="password">Password</label>
       <input id="password" type="password" required minlength="6"
-        autocomplete="current-password" placeholder="At least 6 characters">
+        autocomplete="new-password" placeholder="At least 6 characters">
 
       <button class="primary" id="authButton" type="submit"
         style="width:100%;margin-top:22px">Create Account</button>
     </form>
 
-    <p id="message"></p>
+    <p id="message" role="status" aria-live="polite"></p>
     <p class="muted center" style="font-size:12px">
       Authentication powered by Firebase.
     </p>
@@ -171,7 +179,6 @@ import {
   updateProfile
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 
-/* Your Firebase web configuration */
 const firebaseConfig = {
   apiKey: "AIzaSyAW3wzl2yaYx1qAyghK5Tp1BnzVr05T6OA",
   authDomain: "ai-video-studio-c4c8e.firebaseapp.com",
@@ -185,6 +192,20 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const $ = id => document.getElementById(id);
+
+// Firebase login token ko API request ke saath bhejna
+async function getAuthHeaders() {
+  const user = auth.currentUser;
+
+  if (!user) {
+    throw new Error("Please login first.");
+  }
+
+  return {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${await user.getIdToken()}`
+  };
+}
 
 let mode = "signup";
 let generating = false;
@@ -238,8 +259,11 @@ $("authForm").addEventListener("submit", async event => {
           displayName: name
         });
       }
+
+      $("message").textContent = "Account created successfully!";
     } else {
       await signInWithEmailAndPassword(auth, email, password);
+      $("message").textContent = "Login successful!";
     }
   } catch (error) {
     const errors = {
@@ -252,7 +276,9 @@ $("authForm").addEventListener("submit", async event => {
       "auth/invalid-credential":
         "Incorrect email or password.",
       "auth/network-request-failed":
-        "Network error. Please try again."
+        "Network error. Please try again.",
+      "auth/too-many-requests":
+        "Too many attempts. Please try again later."
     };
 
     $("message").textContent =
@@ -334,6 +360,11 @@ function showVideo(url) {
 $("generate").addEventListener("click", async () => {
   if (generating) return;
 
+  if (!auth.currentUser) {
+    $("status").textContent = "Please login first.";
+    return;
+  }
+
   const prompt = $("prompt").value.trim();
 
   if (!prompt) {
@@ -363,11 +394,10 @@ $("generate").addEventListener("click", async () => {
         : "Preferred music mood: " + $("music").value
     ].join("\n");
 
+    // VIDEO GENERATION REQUEST: authentication header added
     const response = await fetch("/api/generate", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: await getAuthHeaders(),
       body: JSON.stringify({
         prompt: fullPrompt,
         aspectRatio: $("ratio").value,
@@ -377,7 +407,6 @@ $("generate").addEventListener("click", async () => {
 
     const data = await readResponse(response);
 
-    // Some backends may return a completed URL immediately.
     if (data.videoUrl) {
       showVideo(data.videoUrl);
       return;
@@ -392,15 +421,13 @@ $("generate").addEventListener("click", async () => {
     const jobId = data.jobId;
     $("status").textContent = "Video queued. Waiting for completion...";
 
-    // Check the backend for job status every 5 seconds.
+    // STATUS REQUEST: authentication header added
     for (let attempt = 1; attempt <= 60; attempt++) {
       await wait(5000);
 
       const statusResponse = await fetch("/api/generate", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: await getAuthHeaders(),
         body: JSON.stringify({
           action: "status",
           jobId
@@ -439,4 +466,5 @@ $("generate").addEventListener("click", async () => {
 setMode("signup");
 </script>
 </body>
-       </html>
+        </html>
+  
