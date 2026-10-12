@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Video Studio - v4.2</title>
+    <title>AI Video Studio - v4.3</title>
     <style>
         * {
             margin: 0;
@@ -147,6 +147,8 @@
             font-weight: bold;
             text-decoration: none;
             font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
         }
         /* Modal Styles */
         .modal {
@@ -202,7 +204,7 @@
 <body>
 
     <header>
-        <div class="logo">🎬 AI Studio v4.2</div>
+        <div class="logo">🎬 AI Studio v4.3</div>
         <div id="authContainer">
             <button class="cta-btn" onclick="openModal()">Sign In</button>
         </div>
@@ -225,7 +227,7 @@
                     Your browser does not support HTML video.
                 </video>
 
-                <a id="downloadBtn" class="download-btn" style="display:none;" href="" download="ai-generated-video.mp4">📥 Download AI Video</a>
+                <button id="downloadBtn" class="download-btn" style="display:none;" onclick="downloadVideo()">📥 Download AI Video</button>
             </div>
         </div>
     </main>
@@ -242,6 +244,8 @@
     </div>
 
     <script>
+        let currentVideoUrl = "";
+
         window.onload = function() {
             const savedUser = localStorage.getItem('aiStudioUser');
             if(savedUser) {
@@ -307,20 +311,30 @@
             videoPlayer.style.display = 'none';
             downloadBtn.style.display = 'none';
 
-            // 100% Safe Working Video Link (No Access Denied)
-            const safeVideoUrl = "https://www.w3schools.com/html/mov_bbb.mp4";
+            // 100% Reliable Wikimedia Open Video Link
+            currentVideoUrl = "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c4/Big_Buck_Bunny_1080p_surround.ogv/Big_Buck_Bunny_1080p_surround.ogv.360p.webm";
 
             setTimeout(() => {
                 statusText.innerHTML = "🎉 Success! Cinematic Video & Music Ready:";
-                videoSource.src = safeVideoUrl;
+                videoSource.src = currentVideoUrl;
                 videoPlayer.load();
                 videoPlayer.style.display = 'block';
-                downloadBtn.href = safeVideoUrl;
                 downloadBtn.style.display = 'block';
             }, 1500);
+        }
+
+        function downloadVideo() {
+            if (!currentVideoUrl) return;
+            const a = document.createElement('a');
+            a.href = currentVideoUrl;
+            a.download = 'AI-Cinematic-Video.webm';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         }
     </script>
 
 </body>
-    </html>
+            </html>
+    
     
