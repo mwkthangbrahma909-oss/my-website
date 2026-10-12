@@ -1,1 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Video Studio - Text to Video Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background-color: #1e293b;
+            border-bottom: 1px solid #334155;
+        }
+        .logo {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #38bdf8;
+        }
+        .cta-btn {
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .hero {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+        .hero h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        .hero h1 span {
+            color: #38bdf8;
+        }
+        .hero p {
+            color: #94a3b8;
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            max-width: 500px;
+        }
+        .studio-box {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            background-color: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 0.5rem;
+            color: white;
+            padding: 0.75rem;
+            font-size: 0.95rem;
+            resize: none;
+            margin-bottom: 1rem;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #38bdf8;
+        }
+        .generate-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #38bdf8, #6366f1);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
 
+    <header>
+        <div class="logo">🎬 AI Studio</div>
+        <button class="cta-btn">Sign In</button>
+    </header>
+
+    <main class="hero">
+        <h1>Transform Text into <span>Stunning Videos</span> with AI</h1>
+        <p>Create professional videos from simple text prompts in seconds. Perfect for creators, marketers, and educators.</p>
+        
+        <div class="studio-box">
+            <textarea placeholder="Type your video script or prompt here (e.g., A cinematic drone shot over a futuristic neon city)..."></textarea>
+            <button class="generate-btn">Generate AI Video 🚀</button>
+        </div>
+    </main>
+
+</body>
+  </html>
+      
