@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Video Studio - v4.7</title>
+    <title>AI Video Studio - v4.8</title>
     <style>
         * {
             margin: 0;
@@ -205,7 +205,7 @@
 <body>
 
     <header>
-        <div class="logo">🎬 AI Studio v4.7</div>
+        <div class="logo">🎬 AI Studio v4.8</div>
         <div id="authContainer">
             <button class="cta-btn" onclick="openModal()">Sign In</button>
         </div>
@@ -216,7 +216,7 @@
         <p>Create professional cinematic videos with background music from simple text prompts.</p>
         
         <div class="studio-box">
-            <textarea id="promptInput" placeholder="Type prompt (e.g., 'Running Video', 'War', etc.)..."></textarea>
+            <textarea id="promptInput" placeholder="Type prompt (e.g., 'Batle of saraighat', etc.)..."></textarea>
             <button class="generate-btn" onclick="generateVideo()">Generate AI Video 🚀</button>
             
             <div id="outputSection" class="output-section">
@@ -304,7 +304,7 @@
 
             outputSection.style.display = 'block';
             videoTitle.innerHTML = "Query: \"" + userPrompt + "\"";
-            statusText.innerHTML = "⏳ Rendering 10-second cinematic video for \"" + userPrompt + "\"...";
+            statusText.innerHTML = "⏳ Rendering full 10-second video for \"" + userPrompt + "\"... Please wait.";
             videoPlayer.style.display = 'none';
             downloadBtn.style.display = 'none';
 
@@ -332,15 +332,22 @@
                 videoPlayer.src = generatedBlobUrl;
                 videoPlayer.style.display = 'block';
                 downloadBtn.style.display = 'block';
-                statusText.innerHTML = "🎉 Success! 10-Second Cinematic Video Ready for \"" + userPrompt + "\":";
+                statusText.innerHTML = "🎉 Success! Full 10-Second Cinematic Video Ready for \"" + userPrompt + "\":";
             };
 
             recorder.start();
 
-            // Render 300 frames (10 seconds at 30 FPS)
-            let frame = 0;
+            let startTime = Date.now();
+            let durationMs = 10000; // Exact 10 seconds
+
             const interval = setInterval(() => {
-                frame++;
+                let elapsed = Date.now() - startTime;
+                let progress = Math.min(elapsed / durationMs, 1.0);
+                let secondsLeft = ((durationMs - elapsed) / 1000).toFixed(1);
+
+                statusText.innerHTML = `⏳ Rendering... ${secondsLeft} seconds remaining`;
+
+                // Render Visuals
                 let gradient = ctx.createLinearGradient(0, 0, 640, 360);
                 gradient.addColorStop(0, '#0f172a');
                 gradient.addColorStop(0.5, '#1e3a8a');
@@ -348,13 +355,11 @@
                 ctx.fillStyle = gradient;
                 ctx.fillRect(0, 0, 640, 360);
 
-                // Moving visual particle effect
                 ctx.beginPath();
-                ctx.arc(320 + Math.sin(frame * 0.08) * 180, 180 + Math.cos(frame * 0.08) * 90, 60, 0, Math.PI * 2);
+                ctx.arc(320 + Math.sin(progress * Math.PI * 6) * 180, 180 + Math.cos(progress * Math.PI * 6) * 90, 60, 0, Math.PI * 2);
                 ctx.fillStyle = 'rgba(56, 189, 248, 0.3)';
                 ctx.fill();
 
-                // Text rendering
                 ctx.fillStyle = '#ffffff';
                 ctx.font = 'bold 22px Segoe UI';
                 ctx.textAlign = 'center';
@@ -362,9 +367,9 @@
                 
                 ctx.font = '13px Segoe UI';
                 ctx.fillStyle = '#38bdf8';
-                ctx.fillText("Cinematic Frame " + frame + " / 300", 320, 210);
+                ctx.fillText("Cinematic Progress: " + Math.floor(progress * 100) + "%", 320, 210);
 
-                if (frame >= 300) { // Stops precisely at 10 seconds
+                if (progress >= 1.0) {
                     clearInterval(interval);
                     recorder.stop();
                 }
@@ -383,5 +388,5 @@
     </script>
 
 </body>
-    </html>
-            
+                                    </html>
+    
