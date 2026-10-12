@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Video Studio - v4.1</title>
+    <title>AI Video Studio - v4.2</title>
     <style>
         * {
             margin: 0;
@@ -202,7 +202,7 @@
 <body>
 
     <header>
-        <div class="logo">🎬 AI Studio v4.1</div>
+        <div class="logo">🎬 AI Studio v4.2</div>
         <div id="authContainer">
             <button class="cta-btn" onclick="openModal()">Sign In</button>
         </div>
@@ -289,7 +289,6 @@
 
         function generateVideo() {
             const userPrompt = document.getElementById('promptInput').value.trim();
-            const lowerPrompt = userPrompt.toLowerCase();
             const outputSection = document.getElementById('outputSection');
             const videoTitle = document.getElementById('videoTitle');
             const statusText = document.getElementById('statusText');
@@ -308,27 +307,15 @@
             videoPlayer.style.display = 'none';
             downloadBtn.style.display = 'none';
 
-            // Safe working public video URLs (No Access Denied errors)
-            let selectedVideo = "https://www.w3schools.com/html/mov_bbb.mp4";
-
-            if (lowerPrompt.includes('war') || lowerPrompt.includes('battle') || lowerPrompt.includes('fight') || lowerPrompt.includes('saraighat')) {
-                selectedVideo = "https://www.w3schools.com/html/mov_bbb.mp4";
-            } else if (lowerPrompt.includes('horse') || lowerPrompt.includes('animal') || lowerPrompt.includes('run')) {
-                selectedVideo = "https://www.w3schools.com/html/mov_movie.mp4";
-            } else if (lowerPrompt.includes('water') || lowerPrompt.includes('river') || lowerPrompt.includes('sea') || lowerPrompt.includes('rain')) {
-                selectedVideo = "https://www.w3schools.com/html/mov_bbb.mp4";
-            } else if (lowerPrompt.includes('bodo') || lowerPrompt.includes('history')) {
-                selectedVideo = "https://www.w3schools.com/html/mov_movie.mp4";
-            } else {
-                selectedVideo = "https://www.w3schools.com/html/mov_bbb.mp4";
-            }
+            // 100% Safe Working Video Link (No Access Denied)
+            const safeVideoUrl = "https://www.w3schools.com/html/mov_bbb.mp4";
 
             setTimeout(() => {
                 statusText.innerHTML = "🎉 Success! Cinematic Video & Music Ready:";
-                videoSource.src = selectedVideo;
+                videoSource.src = safeVideoUrl;
                 videoPlayer.load();
                 videoPlayer.style.display = 'block';
-                downloadBtn.href = selectedVideo;
+                downloadBtn.href = safeVideoUrl;
                 downloadBtn.style.display = 'block';
             }, 1500);
         }
@@ -336,4 +323,4 @@
 
 </body>
     </html>
-                    
+    
