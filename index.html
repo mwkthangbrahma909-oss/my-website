@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Video Studio - v3.5</title>
+    <title>AI Video Studio - v4.0</title>
     <style>
         * {
             margin: 0;
@@ -129,15 +129,6 @@
             color: #38bdf8;
             margin-bottom: 0.5rem;
         }
-        .script-box {
-            background: #1e293b;
-            padding: 0.75rem;
-            border-radius: 0.375rem;
-            font-size: 0.85rem;
-            color: #cbd5e1;
-            margin-bottom: 0.75rem;
-            border-left: 3px solid #38bdf8;
-        }
         video {
             width: 100%;
             border-radius: 0.375rem;
@@ -211,7 +202,7 @@
 <body>
 
     <header>
-        <div class="logo">🎬 AI Studio v3.5</div>
+        <div class="logo">🎬 AI Studio v4.0</div>
         <div id="authContainer">
             <button class="cta-btn" onclick="openModal()">Sign In</button>
         </div>
@@ -219,16 +210,15 @@
 
     <main class="hero">
         <h1>Transform Text into <span>Stunning Videos</span> with AI</h1>
-        <p>Create professional videos with AI voiceover and cinematic scripts from simple prompts.</p>
+        <p>Create professional cinematic videos with background music from simple text prompts.</p>
         
         <div class="studio-box">
-            <textarea id="promptInput" placeholder="Type any prompt (e.g., 'water wave', 'war battlefield', etc.)..."></textarea>
+            <textarea id="promptInput" placeholder="Type prompt (e.g., 'Batle of saraighat', 'horse', 'water', etc.)..."></textarea>
             <button class="generate-btn" onclick="generateVideo()">Generate AI Video 🚀</button>
             
             <div id="outputSection" class="output-section">
                 <h3 id="videoTitle">Generated Result</h3>
-                <div class="script-box" id="scriptText">📜 Script & Voiceover: Loading...</div>
-                <p id="statusText" style="font-size: 0.85rem; color: #a855f7; margin-bottom: 0.5rem;">⏳ Rendering AI Cinematic Frames...</p>
+                <p id="statusText" style="font-size: 0.85rem; color: #a855f7; margin-bottom: 0.5rem;">⏳ Rendering Cinematic Video & Music...</p>
                 
                 <video id="aiVideoPlayer" controls playsinline style="display:none;">
                     <source id="videoSource" src="" type="video/mp4">
@@ -302,7 +292,6 @@
             const lowerPrompt = userPrompt.toLowerCase();
             const outputSection = document.getElementById('outputSection');
             const videoTitle = document.getElementById('videoTitle');
-            const scriptText = document.getElementById('scriptText');
             const statusText = document.getElementById('statusText');
             const videoPlayer = document.getElementById('aiVideoPlayer');
             const videoSource = document.getElementById('videoSource');
@@ -315,34 +304,27 @@
 
             outputSection.style.display = 'block';
             videoTitle.innerHTML = "Query: \"" + userPrompt + "\"";
-            statusText.innerHTML = "⏳ AI is synthesizing voiceover and rendering video for \"" + userPrompt + "\"...";
+            statusText.innerHTML = "⏳ Rendering video & background music for \"" + userPrompt + "\"...";
             videoPlayer.style.display = 'none';
             downloadBtn.style.display = 'none';
 
-            // 100% Fully Dynamic Script that matches user's exact text
-            let generatedScript = `Voiceover: 'Cinematic visual production highlighting "${userPrompt}". Bringing your custom prompt to life with high-definition rendering, professional voice narration, and immersive background audio.' [AI Cinematic Soundscape]`;
+            // Select video based on prompt keywords
             let selectedVideo = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4";
 
-            if (lowerPrompt.includes('war') || lowerPrompt.includes('battle') || lowerPrompt.includes('fight')) {
-                generatedScript = `Voiceover: 'The battlefield echoes with intense tactical maneuvers and high-stakes drama as "${userPrompt}" unfolds in real-time.' [Epic Orchestral War BGM]`;
+            if (lowerPrompt.includes('war') || lowerPrompt.includes('battle') || lowerPrompt.includes('fight') || lowerPrompt.includes('saraighat')) {
                 selectedVideo = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4";
             } else if (lowerPrompt.includes('horse') || lowerPrompt.includes('animal') || lowerPrompt.includes('run')) {
-                generatedScript = `Voiceover: 'Witness the breathtaking motion of "${userPrompt}", captured in stunning ultra-HD slow motion across open plains.' [Dynamic Nature Soundscape]`;
                 selectedVideo = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
             } else if (lowerPrompt.includes('water') || lowerPrompt.includes('river') || lowerPrompt.includes('sea') || lowerPrompt.includes('rain')) {
-                generatedScript = `Voiceover: 'Flowing gently and gracefully, "${userPrompt}" creates a deeply calming and serene visual experience.' [Ambient Water & Acoustic BGM]`;
                 selectedVideo = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4";
             } else if (lowerPrompt.includes('bodo') || lowerPrompt.includes('history')) {
-                generatedScript = `Voiceover: 'Exploring the rich cultural heritage and historical roots associated with "${userPrompt}", filled with deep traditions and legacy.' [Traditional Cinematic Score]`;
                 selectedVideo = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4";
             } else {
-                generatedScript = `Voiceover: 'AI generated cinematic sequence for your custom text prompt: "${userPrompt}". Featuring professional studio voiceover and background score.' [Synthetic Ambient BGM]`;
                 selectedVideo = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4";
             }
 
             setTimeout(() => {
-                statusText.innerHTML = "🎉 Success! AI Video & Voiceover Generated for \"" + userPrompt + "\":";
-                scriptText.innerHTML = "📜 " + generatedScript;
+                statusText.innerHTML = "🎉 Success! Cinematic Video & Music Ready:";
                 videoSource.src = selectedVideo;
                 videoPlayer.load();
                 videoPlayer.style.display = 'block';
@@ -353,5 +335,5 @@
     </script>
 
 </body>
-</html>
-
+    </html>
+    
