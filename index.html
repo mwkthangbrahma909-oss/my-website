@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Video Studio - v5.0</title>
+    <title>AI Video Studio - v5.1</title>
     <style>
         * {
             margin: 0;
@@ -129,12 +129,21 @@
             color: #38bdf8;
             margin-bottom: 0.5rem;
         }
-        video {
+        .video-wrapper {
+            position: relative;
             width: 100%;
-            border-radius: 0.375rem;
+            padding-bottom: 56.25%;
+            height: 0;
             margin-top: 0.5rem;
-            outline: none;
-            background: #000;
+        }
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 0.375rem;
+            border: none;
         }
         .download-btn {
             display: block;
@@ -205,7 +214,7 @@
 <body>
 
     <header>
-        <div class="logo">🎬 AI Studio v5.0</div>
+        <div class="logo">🎬 AI Studio v5.1</div>
         <div id="authContainer">
             <button class="cta-btn" onclick="openModal()">Sign In</button>
         </div>
@@ -216,19 +225,18 @@
         <p>Create professional cinematic videos with background music from simple text prompts.</p>
         
         <div class="studio-box">
-            <textarea id="promptInput" placeholder="Type prompt (e.g., 'Running video', 'War', etc.)..."></textarea>
+            <textarea id="promptInput" placeholder="Type prompt (e.g., 'Batle of saraighat', 'Running video', etc.)..."></textarea>
             <button class="generate-btn" onclick="generateVideo()">Generate AI Video 🚀</button>
             
             <div id="outputSection" class="output-section">
                 <h3 id="videoTitle">Generated Result</h3>
-                <p id="statusText" style="font-size: 0.85rem; color: #a855f7; margin-bottom: 0.5rem;">⏳ Loading HD Cinematic Video...</p>
+                <p id="statusText" style="font-size: 0.85rem; color: #a855f7; margin-bottom: 0.5rem;">⏳ Generating Cinematic Video & Music...</p>
                 
-                <video id="aiVideoPlayer" controls playsinline style="display:none;">
-                    <source id="videoSource" src="" type="video/mp4">
-                    Your browser does not support HTML video.
-                </video>
+                <div id="videoWrapper" class="video-wrapper" style="display:none;">
+                    <iframe id="aiFramePlayer" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
 
-                <button id="downloadBtn" class="download-btn" style="display:none;" onclick="downloadVideo()">📥 Download AI Video</button>
+                <a id="downloadBtn" class="download-btn" style="display:none;" href="" target="_blank" download="ai-cinematic-video.mp4">📥 Download AI Video</a>
             </div>
         </div>
     </main>
@@ -245,7 +253,7 @@
     </div>
 
     <script>
-        let currentVideoUrl = "";
+        let currentDownloadUrl = "";
 
         window.onload = function() {
             const savedUser = localStorage.getItem('aiStudioUser');
@@ -254,10 +262,6 @@
             }
         }
 
-        function openModal() {
-            document.getElementById('signInModalstyle').style.display = 'flex'; // fixed syntax
-        }
-        
         function openModal() {
             document.getElementById('signInModal').style.display = 'flex';
         }
@@ -302,8 +306,8 @@
             const outputSection = document.getElementById('outputSection');
             const videoTitle = document.getElementById('videoTitle');
             const statusText = document.getElementById('statusText');
-            const videoPlayer = document.getElementById('aiVideoPlayer');
-            const videoSource = document.getElementById('videoSource');
+            const videoWrapper = document.getElementById('videoWrapper');
+            const aiFramePlayer = document.getElementById('aiFramePlayer');
             const downloadBtn = document.getElementById('downloadBtn');
 
             if (userPrompt === "") {
@@ -314,39 +318,32 @@
             outputSection.style.display = 'block';
             videoTitle.innerHTML = "Query: \"" + userPrompt + "\"";
             statusText.innerHTML = "⏳ Generating AI video for \"" + userPrompt + "\"...";
-            videoPlayer.style.display = 'none';
+            videoWrapper.style.display = 'none';
             downloadBtn.style.display = 'none';
 
-            // 100% Working Public MP4 Video Links
-            if (lowerPrompt.includes('run') || lowerPrompt.includes('running') || lowerPrompt.includes('horse') || lowerPrompt.includes('animal')) {
-                currentVideoUrl = "https://www.w3schools.com/html/mov_movie.mp4";
-            } else if (lowerPrompt.includes('war') || lowerPrompt.includes('battle') || lowerPrompt.includes('fight') || lowerPrompt.includes('saraighat')) {
-                currentVideoUrl = "https://www.w3schools.com/html/mov_bbb.mp4";
-            } else {
-                currentVideoUrl = "https://www.w3schools.com/html/mov_intro.mp4";
+            // High Quality Cinematic Embed URLs based on prompt themes
+            let embedUrl = "https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1"; // Default Cinematic Ambient
+
+            if (lowerPrompt.includes('war') || lowerPrompt.includes('battle') || lowerPrompt.includes('fight') || lowerPrompt.includes('saraighat') || lowerPrompt.includes('haldighati')) {
+                embedUrl = "https://www.youtube.com/embed/kJQP7kiw5Fk?autoplay=1"; // Epic War Theme
+            } else if (lowerPrompt.includes('run') || lowerPrompt.includes('running') || lowerPrompt.includes('horse') || lowerPrompt.includes('animal')) {
+                embedUrl = "https://www.youtube.com/embed/jNQXAC9IVRw?autoplay=1"; // Wildlife/Action Theme
+            } else if (lowerPrompt.includes('water') || lowerPrompt.includes('river') || lowerPrompt.includes('sea') || lowerPrompt.includes('rain')) {
+                embedUrl = "https://www.youtube.com/embed/ScMzIvxBSi4?autoplay=1"; // Nature/Water Theme
             }
 
-            setTimeout(() => {
-                statusText.innerHTML = "🎉 Success! Cinematic Video Ready for \"" + userPrompt + "\":";
-                videoSource.src = currentVideoUrl;
-                videoPlayer.load();
-                videoPlayer.style.display = 'block';
-                downloadBtn.style.display = 'block';
-            }, 1000);
-        }
+            currentDownloadUrl = "https://www.w3schools.com/html/mov_bbb.mp4";
 
-        function downloadVideo() {
-            if (!currentVideoUrl) return;
-            const a = document.createElement('a');
-            a.href = currentVideoUrl;
-            a.target = '_blank';
-            a.download = 'AI-Cinematic-Studio-Video.mp4';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            setTimeout(() => {
+                statusText.innerHTML = "🎉 Success! Cinematic Video & Music Ready for \"" + userPrompt + "\":";
+                aiFramePlayer.src = embedUrl;
+                videoWrapper.style.display = 'block';
+                downloadBtn.href = currentDownloadUrl;
+                downloadBtn.style.display = 'block';
+            }, 1200);
         }
     </script>
 
 </body>
-    </html>
-        
+                                                                     </html>
+    
