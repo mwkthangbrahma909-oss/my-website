@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,11 +32,11 @@ video{width:100%;max-height:500px;border-radius:10px}
 a{color:#c4b5fd}
 #media{margin-top:18px}
 @media(max-width:600px){
-  .grid{grid-template-columns:1fr}
-  h1{font-size:28px}
-  .card{padding:17px}
-  header{padding:12px 4%}
-  .logo{font-size:19px}
+.grid{grid-template-columns:1fr}
+h1{font-size:28px}
+.card{padding:17px}
+header{padding:12px 4%}
+.logo{font-size:19px}
 }
 </style>
 </head>
@@ -45,7 +44,7 @@ a{color:#c4b5fd}
 <body>
 <header>
   <div class="logo">✦ AI Video Studio</div>
-  <button id="logout" class="secondary hidden">Logout</button>
+  <button id="logout" class="secondary hidden" type="button">Logout</button>
 </header>
 
 <section id="auth" class="wrap">
@@ -89,7 +88,7 @@ a{color:#c4b5fd}
 
   <div class="card">
     <label for="prompt">Describe your video</label>
-    <textarea id="prompt"
+    <textarea id="prompt" required
       placeholder="A realistic village at sunrise, camera moving slowly over green fields, cinematic lighting..."></textarea>
 
     <div class="grid">
@@ -193,20 +192,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const $ = id => document.getElementById(id);
 
-// Firebase login token ko API request ke saath bhejna
-async function getAuthHeaders() {
-  const user = auth.currentUser;
-
-  if (!user) {
-    throw new Error("Please login first.");
-  }
-
-  return {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${await user.getIdToken()}`
-  };
-}
-
 let mode = "signup";
 let generating = false;
 
@@ -278,11 +263,13 @@ $("authForm").addEventListener("submit", async event => {
       "auth/network-request-failed":
         "Network error. Please try again.",
       "auth/too-many-requests":
-        "Too many attempts. Please try again later."
+        "Too many attempts. Please try again later.",
+      "auth/operation-not-allowed":
+        "Enable Email/Password sign-in in Firebase Console."
     };
 
     $("message").textContent =
-      errors[error.code] || error.message;
+      errors[error.code] || "Authentication failed. Please try again.";
   } finally {
     $("authButton").disabled = false;
   }
@@ -291,8 +278,8 @@ $("authForm").addEventListener("submit", async event => {
 $("logout").addEventListener("click", async () => {
   try {
     await signOut(auth);
-  } catch (error) {
-    $("status").textContent = error.message;
+  } catch {
+    $("status").textContent = "Logout failed. Please try again.";
   }
 });
 
@@ -309,49 +296,26 @@ onAuthStateChanged(auth, user => {
   }
 });
 
-function wait(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function readResponse(response) {
-  const text = await response.text();
-
-  let data;
-  try {
-    data = text ? JSON.parse(text) : {};
-  } catch {
-    throw new Error(
-      "Server returned an invalid response. Check Vercel logs."
-    );
-  }
-
-  if (!response.ok) {
-    throw new Error(
-      data.error || data.message || `Request failed (${response.status})`
-    );
-  }
-
-  return data;
-}
-
 function showVideo(url) {
-  if (!url || typeof url !== "string") {
-    throw new Error("The API did not return a video URL.");
+  const parsed = new URL(url, window.location.origin);
+
+  if (!["https:", "http:"].includes(parsed.protocol)) {
+    throw new Error("The video URL is invalid.");
   }
 
   const video = document.createElement("video");
   video.controls = true;
   video.playsInline = true;
   video.preload = "metadata";
-  video.src = url;
+  video.src = parsed.href;
 
   $("preview").replaceChildren(video);
 
   const link = document.createElement("a");
-  link.href = url;
+  link.href = parsed.href;
   link.target = "_blank";
   link.rel = "noopener noreferrer";
-  link.textContent = "Open / Download Video";
+  link.textContent = "Open Video";
 
   $("media").replaceChildren(link);
   $("status").textContent = "Video ready!";
@@ -360,103 +324,76 @@ function showVideo(url) {
 $("generate").addEventListener("click", async () => {
   if (generating) return;
 
-  if (!auth.currentUser) {
+  const user = auth.currentUser;
+  if (!user) {
     $("status").textContent = "Please login first.";
     return;
   }
 
   const prompt = $("prompt").value.trim();
-
   if (!prompt) {
     $("status").textContent = "Please enter a video prompt.";
+    $("prompt").focus();
     return;
   }
 
   generating = true;
   $("generate").disabled = true;
   $("media").replaceChildren();
-  $("status").textContent = "Starting video generation...";
-
-  $("preview").replaceChildren(
-    document.createTextNode("Please wait while your video is created...")
-  );
+  $("status").textContent = "Checking video generation service...";
 
   try {
-    const fullPrompt = [
-      prompt,
-      "Visual style: " + $("style").value,
-      "Requested voiceover language: " + $("language").value,
-      $("voice").value === "yes"
-        ? "Voiceover requested in the selected language."
-        : "No voiceover.",
-      $("music").value === "none"
-        ? "No background music."
-        : "Preferred music mood: " + $("music").value
-    ].join("\n");
+    const token = await user.getIdToken();
 
-    // VIDEO GENERATION REQUEST: authentication header added
     const response = await fetch("/api/generate", {
       method: "POST",
-      headers: await getAuthHeaders(),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
       body: JSON.stringify({
-        prompt: fullPrompt,
+        prompt,
+        style: $("style").value,
+        language: $("language").value,
         aspectRatio: $("ratio").value,
-        duration: Number($("duration").value)
+        duration: Number($("duration").value),
+        music: $("music").value,
+        voiceover: $("voice").value === "yes"
       })
     });
 
-    const data = await readResponse(response);
+    const text = await response.text();
+    let data;
 
-    if (data.videoUrl) {
-      showVideo(data.videoUrl);
-      return;
+    try {
+      data = text ? JSON.parse(text) : {};
+    } catch {
+      throw new Error("Invalid server response. Check the Vercel deployment logs.");
     }
 
-    if (!data.jobId) {
+    if (!response.ok) {
       throw new Error(
-        "No job ID returned. Check the Magic Hour API response."
+        data.error || data.message ||
+        `Video service request failed (${response.status}).`
       );
     }
 
-    const jobId = data.jobId;
-    $("status").textContent = "Video queued. Waiting for completion...";
-
-    // STATUS REQUEST: authentication header added
-    for (let attempt = 1; attempt <= 60; attempt++) {
-      await wait(5000);
-
-      const statusResponse = await fetch("/api/generate", {
-        method: "POST",
-        headers: await getAuthHeaders(),
-        body: JSON.stringify({
-          action: "status",
-          jobId
-        })
-      });
-
-      const result = await readResponse(statusResponse);
-      const state = String(result.status || "").toLowerCase();
-
-      if (result.videoUrl) {
-        showVideo(result.videoUrl);
-        return;
-      }
-
-      if (["failed", "error", "cancelled", "canceled"].includes(state)) {
-        throw new Error(result.error || "Video generation failed.");
-      }
-
-      $("status").textContent =
-        `Video is processing... Check ${attempt}/60.`;
+    if (data.videoUrl) {
+      showVideo(data.videoUrl);
+    } else {
+      throw new Error(
+        data.message ||
+        "No video service is connected yet. Login works, but video generation is not configured."
+      );
     }
-
-    $("status").textContent =
-      "Video is taking longer than expected. Please try again later.";
-
   } catch (error) {
     $("status").textContent = "Error: " + error.message;
-    $("preview").textContent =
-      "Video could not be displayed. Check the error message above.";
+
+    $("preview").replaceChildren(
+      document.createTextNode(
+        "No video was created. Check the message above."
+      )
+    );
   } finally {
     generating = false;
     $("generate").disabled = false;
@@ -466,5 +403,4 @@ $("generate").addEventListener("click", async () => {
 setMode("signup");
 </script>
 </body>
-        </html>
-  
+            </html>
