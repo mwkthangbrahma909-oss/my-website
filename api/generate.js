@@ -1,74 +1,179 @@
 
-const admin = require("firebase-admin");
+import { initializeApp, getApps, cert } from "firebase-admin/app";
+import { getAuth } from "firebase-admin/auth";
 
-function getFirebaseAdmin() {
-  if (!admin.apps.length) {
-    const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
+const videos = {
+  bunny: {
+    title: "Big Buck Bunny",
+    url: "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    keywords: [
+      "rabbit", "bunny", "hare", "khargosh", "खरगोश",
+      "forest", "jungle", "cartoon"
+    ]
+  },
 
-    if (!raw) {
-      throw new Error("Firebase server credentials are missing.");
+  dream: {
+    title: "Elephants Dream",
+    url: "https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    keywords: [
+      "dream", "elephant", "elephants", "fantasy",
+      "magic", "sapna", "हाथी", "जादू"
+    ]
+  },
+
+  adventure: {
+    title: "Sintel",
+    url: "https://download.blender.org/demo/movies/Sintel.mp4",
+    keywords: [
+      "sintel", "dragon", "adventure", "warrior",
+      "mountain", "quest", "ड्रैगन", "रोमांच"
+    ]
+  },
+
+  fun: {
+    title: "For Bigger Fun",
+    url: "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    keywords: [
+      "fun", "funny", "comedy", "happy",
+      "party", "मजेदार", "हंसी", "खुशी"
+    ]
+  },
+
+  scifi: {
+    title: "Tears of Steel",
+    url: "https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+    keywords: [
+      "robot", "robots", "sci-fi", "science fiction",
+      "space", "future", "technology", "रोबोट", "अंतरिक्ष"
+    ]
+  }
+};
+
+function matchVideo(prompt) {
+  const text = prompt.toLowerCase();
+  let selected = "bunny";
+  let highestScore = 0;
+
+  for (const [key, video] of Object.entries(videos)) {
+    let score = 0;
+
+    for (const keyword of video.keywords) {
+      if (text.includes(keyword.toLowerCase())) {
+        score += keyword.includes(" ") ? 2 : 1;
+      }
     }
 
-    admin.initializeApp({
-      credential: admin.credential.cert(JSON.parse(raw))
+    if (score > highestScore) {
+      highestScore = score;
+      selected = key;
+    }
+  }
+
+  return {
+    key: selected,
+    matched: highestScore > 0
+  };
+}
+
+function getFirebaseAuth() {
+  const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
+
+  if (!serviceAccount) {
+    throw new Error("Firebase Admin credentials are not configured.");
+  }
+
+  if (getApps().length === 0) {
+    let credentials;
+
+    try {
+      credentials = JSON.parse(serviceAccount);
+    } catch {
+      throw new Error("Firebase service account JSON is invalid.");
+    }
+
+    initializeApp({
+      credential: cert(credentials)
     });
   }
 
-  return admin;
+  return getAuth();
 }
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
+  res.setHeader("Cache-Control", "no-store");
+
   if (req.method !== "POST") {
+    res.setHeader("Allow", "POST");
     return res.status(405).json({
-      success: false,
-      error: "POST request required"
+      error: "Method not allowed. Use POST."
     });
   }
 
   try {
-    const firebase = getFirebaseAdmin();
     const authorization = req.headers.authorization || "";
-    const match = authorization.match(/^Bearer (.+)$/);
+    const match = authorization.match(/^Bearer\s+(.+)$/i);
 
     if (!match) {
       return res.status(401).json({
-        success: false,
         error: "Please login first."
       });
     }
 
-    await firebase.auth().verifyIdToken(match[1]);
-  } catch (error) {
-    console.error("Authentication error:", error.message);
+    const adminAuth = getFirebaseAuth();
 
-    return res.status(401).json({
-      success: false,
-      error: "Login required or session expired."
-    });
-  }
+    try {
+      await adminAuth.verifyIdToken(match[1]);
+    } catch {
+      return res.status(401).json({
+        error: "Invalid or expired login session. Please login again."
+      });
+    }
 
-  const body = req.body || {};
+    const body = req.body || {};
+    const prompt =
+      typeof body.prompt === "string"
+        ? body.prompt.trim()
+        : "";
 
-  if (body.action === "status") {
+    if (!prompt) {
+      return res.status(400).json({
+        error: "Please enter a video prompt."
+      });
+    }
+
+    if (prompt.length > 5000) {
+      return res.status(400).json({
+        error: "Prompt must be 5000 characters or fewer."
+      });
+    }
+
+    const result = matchVideo(prompt);
+    const video = videos[result.key];
+
     return res.status(200).json({
       success: true,
-      status: "not_configured",
-      videoUrl: null,
-      message: "Free video generation is not connected yet."
+      videoUrl: video.url,
+      title: video.title,
+      category: result.key,
+      matched: result.matched,
+      message: result.matched
+        ? `Matched your prompt to ${video.title}.`
+        : `No keyword match found. Using ${video.title} as the default sample.`,
+      settings: {
+        style: body.style || "3D animation",
+        language: body.language || "Hindi",
+        aspectRatio: body.aspectRatio || "9:16",
+        duration: Number(body.duration) || 5,
+        music: body.music || "cinematic",
+        voiceover: body.voiceover === true
+      }
+    });
+  } catch (error) {
+    console.error("Video selection error:", error.message);
+
+    return res.status(500).json({
+      error: "Video selection service is not configured correctly."
     });
   }
-
-  if (typeof body.prompt !== "string" || !body.prompt.trim()) {
-    return res.status(400).json({
-      success: false,
-      error: "Please enter a video prompt."
-    });
-  }
-
-  return res.status(501).json({
-    success: false,
-    status: "not_configured",
-    error: "No video generation provider is connected yet. No paid API was called."
-  });
-};
-      
+      }
+  
