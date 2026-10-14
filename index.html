@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,23 +21,33 @@ h1{text-align:center;font-size:34px}
 .muted{color:#a7a9c0;line-height:1.6}
 .center{text-align:center}
 label{display:block;margin:17px 0 8px}
-input,textarea,select{width:100%;padding:13px;border:1px solid #3b3d54;border-radius:9px;background:#0b0d18;color:white;font-size:15px}
+input,textarea,select{
+ width:100%;padding:13px;border:1px solid #3b3d54;
+ border-radius:9px;background:#0b0d18;color:white;font-size:15px
+}
 textarea{height:130px;resize:vertical}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .hidden{display:none!important}
 .tabs{display:flex;gap:10px;margin-bottom:20px}
 .tabs button{flex:1}
 #message,#status{white-space:pre-wrap;color:#c4b5fd;margin-top:15px;line-height:1.6}
-.preview{margin-top:22px;min-height:190px;background:#090b12;border:1px dashed #44465b;border-radius:12px;display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;overflow:hidden}
+.preview{
+ margin-top:22px;min-height:190px;background:#090b12;
+ border:1px dashed #44465b;border-radius:12px;
+ display:flex;align-items:center;justify-content:center;
+ text-align:center;padding:16px;overflow:hidden
+}
 video{width:100%;max-height:500px;border-radius:10px}
-a{color:#c4b5fd}
-#media{margin-top:18px}
+a{color:#c4b5fd;overflow-wrap:anywhere}
+#media{margin-top:18px;line-height:1.8}
+.note{font-size:13px;color:#a7a9c0;line-height:1.6}
+.badge{display:inline-block;padding:5px 9px;border-radius:8px;background:#25263a;color:#c4b5fd;font-size:12px}
 @media(max-width:600px){
-.grid{grid-template-columns:1fr}
-h1{font-size:28px}
-.card{padding:17px}
-header{padding:12px 4%}
-.logo{font-size:19px}
+ .grid{grid-template-columns:1fr}
+ h1{font-size:28px}
+ .card{padding:17px}
+ header{padding:12px 4%}
+ .logo{font-size:19px}
 }
 </style>
 </head>
@@ -50,7 +61,7 @@ header{padding:12px 4%}
 <section id="auth" class="wrap">
   <div class="card" style="max-width:460px;margin:auto">
     <h1 id="authTitle">Create Account</h1>
-    <p class="muted center">Create AI videos from your ideas.</p>
+    <p class="muted center">Create videos from your ideas.</p>
 
     <div class="tabs">
       <button id="signupTab" type="button" class="primary">Sign Up</button>
@@ -83,15 +94,36 @@ header{padding:12px 4%}
 </section>
 
 <main id="studio" class="wrap hidden">
-  <h1>Create Videos with AI</h1>
-  <p class="muted center">Describe your idea and create an AI video.</p>
+  <h1>Cartoon Video Studio</h1>
+  <p class="muted center">
+    Enter a story idea and choose a matching sample animation.
+  </p>
 
   <div class="card">
     <label for="prompt">Describe your video</label>
-    <textarea id="prompt" required
-      placeholder="A realistic village at sunrise, camera moving slowly over green fields, cinematic lighting..."></textarea>
+    <textarea id="prompt"
+      placeholder="Example: A funny rabbit runs through a beautiful green forest..."></textarea>
 
     <div class="grid">
+      <div>
+        <label for="selectionMode">Video Selection Mode</label>
+        <select id="selectionMode">
+          <option value="automatic">Automatic - Match my text</option>
+          <option value="manual">Manual - Choose a video</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="category">Choose Cartoon / Animation</label>
+        <select id="category">
+          <option value="bunny">Rabbit / Bunny Animation</option>
+          <option value="dream">Dream / Fantasy Animation</option>
+          <option value="adventure">Fantasy Adventure</option>
+          <option value="fun">Fun / Comedy Sample</option>
+          <option value="scifi">Sci-Fi / Robot Sample</option>
+        </select>
+      </div>
+
       <div>
         <label for="language">Voiceover Language</label>
         <select id="language">
@@ -105,14 +137,14 @@ header{padding:12px 4%}
       <div>
         <label for="ratio">Video Format</label>
         <select id="ratio">
-          <option value="9:16">9:16 Shorts/Reels</option>
+          <option value="9:16">9:16 Shorts / Reels</option>
           <option value="16:9">16:9 YouTube</option>
           <option value="1:1">1:1 Square</option>
         </select>
       </div>
 
       <div>
-        <label for="duration">Duration</label>
+        <label for="duration">Requested Duration</label>
         <select id="duration">
           <option value="3">3 seconds</option>
           <option value="5" selected>5 seconds</option>
@@ -123,11 +155,11 @@ header{padding:12px 4%}
       <div>
         <label for="style">Video Style</label>
         <select id="style">
-          <option value="Photorealistic cinematic">Realistic Cinematic</option>
-          <option value="Nature documentary">Nature Documentary</option>
-          <option value="Anime">Anime</option>
           <option value="3D animation">3D Animation</option>
+          <option value="Anime">Anime</option>
           <option value="Fantasy cinematic">Fantasy</option>
+          <option value="Nature documentary">Nature Documentary</option>
+          <option value="Photorealistic cinematic">Realistic Cinematic</option>
         </select>
       </div>
     </div>
@@ -147,9 +179,16 @@ header{padding:12px 4%}
       <option value="no">No Voiceover</option>
     </select>
 
+    <p class="note">
+      These are existing sample videos. Prompt matching selects a related
+      sample; it does not create new scenes, voiceovers, music or durations.
+      Video format, style and language settings are preferences only in
+      this sample-player version.
+    </p>
+
     <button id="generate" type="button" class="primary"
-      style="width:100%;margin-top:24px">
-      ✨ Generate AI Video
+      style="width:100%;margin-top:12px">
+      ▶ Find & Play Cartoon Video
     </button>
 
     <p id="status" role="status" aria-live="polite"></p>
@@ -157,11 +196,20 @@ header{padding:12px 4%}
     <div id="preview" class="preview">
       <div>
         <div style="font-size:42px">▶</div>
-        <p>Your video will appear here.</p>
+        <p>Your selected sample video will appear here.</p>
       </div>
     </div>
 
     <div id="media"></div>
+
+    <div style="margin-top:25px">
+      <h3>Available Sample Videos</h3>
+      <p class="note">
+        Select Manual mode to choose one of these samples yourself.
+        Video availability depends on the remote hosting service.
+      </p>
+      <div id="videoList" class="grid"></div>
+    </div>
   </div>
 </main>
 
@@ -178,6 +226,10 @@ import {
   updateProfile
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 
+/*
+  Keep your Firebase project configuration here.
+  If you use a different Firebase project, replace these values.
+*/
 const firebaseConfig = {
   apiKey: "AIzaSyAW3wzl2yaYx1qAyghK5Tp1BnzVr05T6OA",
   authDomain: "ai-video-studio-c4c8e.firebaseapp.com",
@@ -193,7 +245,63 @@ const auth = getAuth(app);
 const $ = id => document.getElementById(id);
 
 let mode = "signup";
-let generating = false;
+let selectingVideo = false;
+
+/*
+  Preloaded public sample video links.
+  These are demo clips, not a separate real cartoon for every keyword.
+*/
+const videos = {
+  bunny: {
+    title: "Big Buck Bunny",
+    description: "Animated rabbit / bunny sample",
+    url: "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    keywords: [
+      "rabbit", "bunny", "hare", "khargosh", "खरगोश",
+      "bunny", "big buck", "forest", "jungle", "cartoon"
+    ]
+  },
+
+  dream: {
+    title: "Elephants Dream",
+    description: "Surreal animated fantasy sample",
+    url: "https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    keywords: [
+      "dream", "elephant", "elephants", "fantasy", "magic",
+      "surreal", "imagination", "sapna", "हाथी", "जादू"
+    ]
+  },
+
+  adventure: {
+    title: "Sintel",
+    description: "Animated fantasy adventure sample",
+    url: "https://download.blender.org/demo/movies/Sintel.mp4",
+    keywords: [
+      "sintel", "dragon", "adventure", "warrior", "quest",
+      "mountain", "fantasy adventure", "ड्रैगन", "रोमांच"
+    ]
+  },
+
+  fun: {
+    title: "For Bigger Fun",
+    description: "General entertainment demo clip",
+    url: "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    keywords: [
+      "fun", "funny", "comedy", "happy", "party",
+      "entertainment", "मजेदार", "हंसी", "खुशी"
+    ]
+  },
+
+  scifi: {
+    title: "Tears of Steel",
+    description: "Science-fiction / robot-themed demo",
+    url: "https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+    keywords: [
+      "robot", "robots", "sci-fi", "science fiction", "space",
+      "future", "technology", "city", "machine", "रोबोट", "अंतरिक्ष"
+    ]
+  }
+};
 
 function setMode(next) {
   mode = next;
@@ -293,14 +401,100 @@ onAuthStateChanged(auth, user => {
       "Welcome " + (user.displayName || user.email) + "!";
   } else {
     $("status").textContent = "";
+    $("preview").replaceChildren(
+      document.createTextNode("Please log in to use the video studio.")
+    );
+    $("media").replaceChildren();
   }
 });
 
-function showVideo(url) {
-  const parsed = new URL(url, window.location.origin);
+/* Show or hide manual selection. */
+function updateSelectionMode() {
+  const manual = $("selectionMode").value === "manual";
+  $("category").disabled = !manual;
+  $("category").style.opacity = manual ? "1" : ".65";
+}
 
-  if (!["https:", "http:"].includes(parsed.protocol)) {
-    throw new Error("The video URL is invalid.");
+$("selectionMode").addEventListener("change", updateSelectionMode);
+
+/* Render the sample-video list. */
+function renderVideoList() {
+  const container = $("videoList");
+  container.replaceChildren();
+
+  Object.entries(videos).forEach(([key, video]) => {
+    const card = document.createElement("div");
+    card.style.cssText =
+      "background:#0b0d18;border:1px solid #303249;" +
+      "padding:14px;border-radius:12px;min-width:0";
+
+    const title = document.createElement("strong");
+    title.textContent = video.title;
+
+    const description = document.createElement("p");
+    description.className = "note";
+    description.textContent = video.description;
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "secondary";
+    button.style.width = "100%";
+    button.textContent = "Play this sample";
+    button.addEventListener("click", () => {
+      $("selectionMode").value = "manual";
+      $("category").value = key;
+      updateSelectionMode();
+      playSelectedVideo(key);
+    });
+
+    card.append(title, description, button);
+    container.append(card);
+  });
+}
+
+/*
+  Simple keyword matching:
+  - Compare the user's text with the predefined keywords.
+  - Pick the category with the most keyword matches.
+  - If nothing matches, use Big Buck Bunny as the default sample.
+*/
+function findMatchingVideo(prompt) {
+  const text = prompt.toLowerCase();
+  let bestKey = "bunny";
+  let bestScore = 0;
+
+  for (const [key, video] of Object.entries(videos)) {
+    let score = 0;
+
+    for (const keyword of video.keywords) {
+      if (text.includes(keyword.toLowerCase())) {
+        score += keyword.includes(" ") ? 2 : 1;
+      }
+    }
+
+    if (score > bestScore) {
+      bestScore = score;
+      bestKey = key;
+    }
+  }
+
+  return {
+    key: bestKey,
+    matched: bestScore > 0
+  };
+}
+
+function showVideo(key) {
+  const selected = videos[key];
+
+  if (!selected) {
+    throw new Error("The selected sample video was not found.");
+  }
+
+  const parsed = new URL(selected.url);
+
+  if (parsed.protocol !== "https:") {
+    throw new Error("The sample video must use a secure HTTPS link.");
   }
 
   const video = document.createElement("video");
@@ -308,6 +502,20 @@ function showVideo(url) {
   video.playsInline = true;
   video.preload = "metadata";
   video.src = parsed.href;
+  video.setAttribute("aria-label", selected.title);
+
+  video.addEventListener("error", () => {
+    $("status").textContent =
+      "This video could not be loaded. The sample link may be unavailable. " +
+      "Try another sample or check your internet connection.";
+  });
+
+  const heading = document.createElement("h3");
+  heading.textContent = selected.title;
+
+  const description = document.createElement("p");
+  description.className = "note";
+  description.textContent = selected.description;
 
   $("preview").replaceChildren(video);
 
@@ -315,92 +523,89 @@ function showVideo(url) {
   link.href = parsed.href;
   link.target = "_blank";
   link.rel = "noopener noreferrer";
-  link.textContent = "Open Video";
+  link.textContent = "Open video in a new tab";
 
-  $("media").replaceChildren(link);
-  $("status").textContent = "Video ready!";
+  const details = document.createElement("div");
+  details.append(heading, description, link);
+  $("media").replaceChildren(details);
+
+  $("status").textContent =
+    "Selected: " + selected.title +
+    ". Press Play in the video player to start.";
 }
 
-$("generate").addEventListener("click", async () => {
-  if (generating) return;
+/* Manual or automatic video selection. */
+function playSelectedVideo(manualKey = null) {
+  if (selectingVideo) return;
 
-  const user = auth.currentUser;
-  if (!user) {
+  selectingVideo = true;
+  $("generate").disabled = true;
+
+  try {
+    const prompt = $("prompt").value.trim();
+    let key;
+
+    if (manualKey) {
+      key = manualKey;
+    } else if ($("selectionMode").value === "manual") {
+      key = $("category").value;
+    } else {
+      if (!prompt) {
+        $("status").textContent =
+          "Please describe your video idea first.";
+        $("prompt").focus();
+        return;
+      }
+
+      const result = findMatchingVideo(prompt);
+      key = result.key;
+
+      if (result.matched) {
+        $("status").textContent =
+          "Matching your text to a sample video...";
+      } else {
+        $("status").textContent =
+          "No keyword match found. Selecting the default animation sample.";
+      }
+    }
+
+    showVideo(key);
+
+    if (
+      !manualKey &&
+      $("selectionMode").value === "automatic"
+    ) {
+      const result = findMatchingVideo(prompt);
+      const matchNote = result.matched
+        ? " Keyword match found."
+        : " Default sample selected.";
+
+      $("status").textContent =
+        "Automatic selection: " + videos[key].title + "." + matchNote +
+        " Press Play to watch.";
+    }
+  } catch (error) {
+    $("status").textContent = "Error: " + error.message;
+  } finally {
+    selectingVideo = false;
+    $("generate").disabled = false;
+  }
+}
+
+$("generate").addEventListener("click", () => {
+  if (!auth.currentUser) {
     $("status").textContent = "Please login first.";
     return;
   }
 
-  const prompt = $("prompt").value.trim();
-  if (!prompt) {
-    $("status").textContent = "Please enter a video prompt.";
-    $("prompt").focus();
-    return;
-  }
-
-  generating = true;
-  $("generate").disabled = true;
-  $("media").replaceChildren();
-  $("status").textContent = "Checking video generation service...";
-
-  try {
-    const token = await user.getIdToken();
-
-    const response = await fetch("/api/generate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        prompt,
-        style: $("style").value,
-        language: $("language").value,
-        aspectRatio: $("ratio").value,
-        duration: Number($("duration").value),
-        music: $("music").value,
-        voiceover: $("voice").value === "yes"
-      })
-    });
-
-    const text = await response.text();
-    let data;
-
-    try {
-      data = text ? JSON.parse(text) : {};
-    } catch {
-      throw new Error("Invalid server response. Check the Vercel deployment logs.");
-    }
-
-    if (!response.ok) {
-      throw new Error(
-        data.error || data.message ||
-        `Video service request failed (${response.status}).`
-      );
-    }
-
-    if (data.videoUrl) {
-      showVideo(data.videoUrl);
-    } else {
-      throw new Error(
-        data.message ||
-        "No video service is connected yet. Login works, but video generation is not configured."
-      );
-    }
-  } catch (error) {
-    $("status").textContent = "Error: " + error.message;
-
-    $("preview").replaceChildren(
-      document.createTextNode(
-        "No video was created. Check the message above."
-      )
-    );
-  } finally {
-    generating = false;
-    $("generate").disabled = false;
-  }
+  playSelectedVideo();
 });
 
+/* Initialize the interface. */
 setMode("signup");
+renderVideoList();
+updateSelectionMode();
 </script>
 </body>
-            </html>
+  </html>
+            
