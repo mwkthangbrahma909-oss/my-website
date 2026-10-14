@@ -1,5 +1,17 @@
+
 {
+  "name": "ai-video-studio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AI Video Studio with Firebase authentication and automatic cartoon sample selection",
+  "scripts": {
+    "start": "node api/generate.js"
+  },
   "dependencies": {
     "firebase-admin": "^13.0.0"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
