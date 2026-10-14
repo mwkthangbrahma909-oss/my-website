@@ -5,16 +5,16 @@ import { getAuth } from "firebase-admin/auth";
 const videos = {
   bunny: {
     title: "Big Buck Bunny",
-    url: "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    url: "/videos/big-buck-bunny.mp4",
     keywords: [
       "rabbit", "bunny", "hare", "khargosh", "खरगोश",
-      "forest", "jungle", "cartoon"
+      "forest", "jungle", "cartoon", "खरगोश का कार्टून"
     ]
   },
 
   dream: {
     title: "Elephants Dream",
-    url: "https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    url: "/videos/elephants-dream.mp4",
     keywords: [
       "dream", "elephant", "elephants", "fantasy",
       "magic", "sapna", "हाथी", "जादू"
@@ -23,28 +23,29 @@ const videos = {
 
   adventure: {
     title: "Sintel",
-    url: "https://download.blender.org/demo/movies/Sintel.mp4",
+    url: "/videos/sintel.mp4",
     keywords: [
       "sintel", "dragon", "adventure", "warrior",
-      "mountain", "quest", "ड्रैगन", "रोमांच"
+      "mountain", "quest", "ड्रैगन", "रोमांच", "साहसिक"
     ]
   },
 
   fun: {
-    title: "For Bigger Fun",
-    url: "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    title: "Funny Cartoon",
+    url: "/videos/funny-cartoon.mp4",
     keywords: [
-      "fun", "funny", "comedy", "happy",
-      "party", "मजेदार", "हंसी", "खुशी"
+      "fun", "funny", "comedy", "happy", "party",
+      "मजेदार", "हंसी", "खुशी", "कॉमेडी"
     ]
   },
 
   scifi: {
-    title: "Tears of Steel",
-    url: "https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+    title: "Sci-Fi Animation",
+    url: "/videos/sci-fi-animation.mp4",
     keywords: [
       "robot", "robots", "sci-fi", "science fiction",
-      "space", "future", "technology", "रोबोट", "अंतरिक्ष"
+      "space", "future", "technology", "रोबोट",
+      "अंतरिक्ष", "भविष्य"
     ]
   }
 };
@@ -76,10 +77,13 @@ function matchVideo(prompt) {
 }
 
 function getFirebaseAuth() {
-  const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
+  const serviceAccount =
+    process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
 
   if (!serviceAccount) {
-    throw new Error("Firebase Admin credentials are not configured.");
+    throw new Error(
+      "Firebase Admin credentials are not configured."
+    );
   }
 
   if (getApps().length === 0) {
@@ -88,7 +92,9 @@ function getFirebaseAuth() {
     try {
       credentials = JSON.parse(serviceAccount);
     } catch {
-      throw new Error("Firebase service account JSON is invalid.");
+      throw new Error(
+        "Firebase service account JSON is invalid."
+      );
     }
 
     initializeApp({
@@ -104,17 +110,20 @@ export default async function handler(req, res) {
 
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
+
     return res.status(405).json({
+      success: false,
       error: "Method not allowed. Use POST."
     });
   }
 
   try {
     const authorization = req.headers.authorization || "";
-    const match = authorization.match(/^Bearer\s+(.+)$/i);
+    const tokenMatch = authorization.match(/^Bearer\s+(.+)$/i);
 
-    if (!match) {
+    if (!tokenMatch) {
       return res.status(401).json({
+        success: false,
         error: "Please login first."
       });
     }
@@ -122,14 +131,16 @@ export default async function handler(req, res) {
     const adminAuth = getFirebaseAuth();
 
     try {
-      await adminAuth.verifyIdToken(match[1]);
+      await adminAuth.verifyIdToken(tokenMatch[1]);
     } catch {
       return res.status(401).json({
-        error: "Invalid or expired login session. Please login again."
+        success: false,
+        error: "Login expired or invalid. Please login again."
       });
     }
 
     const body = req.body || {};
+
     const prompt =
       typeof body.prompt === "string"
         ? body.prompt.trim()
@@ -137,12 +148,14 @@ export default async function handler(req, res) {
 
     if (!prompt) {
       return res.status(400).json({
+        success: false,
         error: "Please enter a video prompt."
       });
     }
 
     if (prompt.length > 5000) {
       return res.status(400).json({
+        success: false,
         error: "Prompt must be 5000 characters or fewer."
       });
     }
@@ -156,9 +169,11 @@ export default async function handler(req, res) {
       title: video.title,
       category: result.key,
       matched: result.matched,
+
       message: result.matched
         ? `Matched your prompt to ${video.title}.`
         : `No keyword match found. Using ${video.title} as the default sample.`,
+
       settings: {
         style: body.style || "3D animation",
         language: body.language || "Hindi",
@@ -172,8 +187,8 @@ export default async function handler(req, res) {
     console.error("Video selection error:", error.message);
 
     return res.status(500).json({
+      success: false,
       error: "Video selection service is not configured correctly."
     });
   }
-      }
-  
+  }
